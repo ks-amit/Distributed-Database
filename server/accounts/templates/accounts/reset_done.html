@@ -1,0 +1,23 @@
+{% extends 'accounts/base.html' %}
+{% load widget_tweaks %}
+
+{% block title_block %}Forgot{% endblock %}
+
+{% block form_block %}
+
+    <div class="column is-4 is-offset-4">
+        <h3 class="title has-text-grey">Password Changed</h3>
+        <div class="box content">
+            <div class="subtitle is-6" style="color: blue;">
+                Your password has been changed. Login to proceed.
+            </div>
+        </div>
+        <div class="content">
+            <a class="tag is-medium is-info" href="{% url 'accounts:Login' %}"><strong>Login</strong></a>
+        </div>
+        <!-- MESSAGES -->
+
+        <!-- MESSAGES END -->
+    </div>
+
+{% endblock %}

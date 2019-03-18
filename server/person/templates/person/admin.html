@@ -1,0 +1,103 @@
+{% extends 'person/base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Admin{% endblock %}
+
+{% block content_block %}
+
+    <div class="columns">
+
+        <!--       USER PRIVILAGES        -->
+
+        <div class="column has-text-centered">
+            <div class="box">
+                <h3 class="subtitle is-5">User Privilages</h3>
+                <form class="section" method = "POST">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="control">
+                            {% render_field form1.email type="text" class="input" placeholder="User Email" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select name="privilage" id="id_privilage">
+                                    {% for x, y in form1.fields.privilage.choices %}
+                                        <option value="{{ x }}">{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button name="user_privilage" class="button is-fullwidth is-info is-medium">Confirm</button>
+                </form>
+                <!-- MESSAGES -->
+
+                <div class="tag is-medium">
+                    {% if error1 %}
+                        <div>
+                            <div class="content">
+                                {% for field in form1 %}
+                                    {% if field.errors %}
+                                        <p style="color: red;">{{ field.errors | striptags }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% elif success1 %}
+                        <div>
+                            <div class="content">
+                                <p style="color: green;">{{ msg1 }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <div class="content">
+                                <span style="color: blue;">Modify access privilages</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- MESSAGES END -->
+            </div>
+        </div>
+
+        <!--       CREATE SERVICE        -->
+
+        <div class="column has-text-centered">
+            <div class="box">
+                <h3 class="subtitle is-5">Create Service</h3>
+                <form class="section" method = "POST">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="control">
+                            {% render_field form2.name type="text" class="input" placeholder="Service Name" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select name="service_type" id="id_service_type">
+                                    {% for x, y in form2.fields.service_type.choices %}
+                                        <option value="{{ x }}">{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button name="new_service" class="button is-fullwidth is-info is-medium">Confirm</button>
+                </form>
+            </div>
+        </div>
+        <div class="column has-text-centered">
+            <!-- YET TO BE FILLED -->
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'person/base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Services{% endblock %}
+
+{% block content_block %}
+
+    <div class="columns has-text-centered">
+        <div class="column is-4 is-offset-4">
+            <div class="box">
+                <h3 class="subtitle is-5">New Service</h3>
+                <form class="section" method = "POST">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="control">
+                            {% render_field form.name type="text" class="input" placeholder="Service Name" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select name="service_type" id="id_service_type">
+                                    {% for x, y in form.fields.service_type.choices %}
+                                        <option value="{{ x }}">{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button name="new_service" class="button is-fullwidth is-primary">Confirm</button>
+                </form>
+
+                <!-- MESSAGES -->
+
+                <div class="tag is-medium">
+                    {% if error %}
+                        <div>
+                            <div class="content">
+                                <p style="color: red;">{{ msg }}</p>    
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <div class="content">
+                                <p style="color: blue;">Start a new service</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- END MESSAGES -->
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

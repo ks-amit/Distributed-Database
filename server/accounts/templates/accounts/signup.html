@@ -1,0 +1,57 @@
+{% extends 'accounts/base.html' %}
+{% load widget_tweaks %}
+
+{% block title_block %}Sign Up{% endblock %}
+
+{% block form_block %}
+
+    <div class="column is-4 is-offset-4">
+        <h3 class="title has-text-grey">Sign Up</h3>
+        <p class="subtitle has-text-grey">Register your account</p>
+        <div class="box">
+            <form method = "POST">
+                {% csrf_token %}
+                <div class="field">
+                    <div class="control">
+                        {% render_field form.email type="email" class="input is-medium" placeholder="Email" %}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {% render_field form.password type="password" class="input is-medium" placeholder="Password" %}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        {% render_field form.password_cnf type="password" class="input is-medium" placeholder="Confirm Password" %}
+                    </div>
+                </div>
+                <button class="button is-fullwidth is-info is-medium">Register</button>
+            </form>
+        </div>
+        <div class="content">
+            <a class="tag is-medium is-light" href="../"><strong>Login</strong></a> &nbsp;·&nbsp;
+            <a class="tag is-light is-medium" href="../"><strong>Forgot Password</strong></a> &nbsp;·&nbsp;
+        </div>
+        <!-- MESSAGES -->
+        <div>
+            {% if error %}
+            <div class="content">
+                <span style="color: red;">{{ msg }}</span>
+            </div>
+            {% endif %}
+            {% if form_err %}
+                {% for field in form %}
+                    {% if field.errors %}
+                    <div class="content"><span style="color: red;">{{ field.errors | striptags }}</span></div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if success %}
+                <div class="content"><span style="color: green;">{{ msg }}</span></div>
+            {% endif %}
+        </div>
+        <!-- MESSAGES END -->
+    </div>
+
+{% endblock %}
