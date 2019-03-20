@@ -1,0 +1,188 @@
+{% extends 'person/base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Services{% endblock %}
+
+{% block content_block %}
+
+    <div class="columns has-text-centered">
+        <div class="column">
+            <div class="box">
+                <h3 class="subtitle is-5">Managers</h3>
+                {% if service.provider|length == 1 %}
+                    {% for provider in service.provider %}
+                        <a href="#" class="button is-small is-light">{{ provider }}</a>
+                    {% endfor %}
+                {% else %}
+                    {% for provider in service.provider %}
+                        <a href="#" class="button is-small is-light">{{ provider }}</a>
+                        <a href="{% url 'person:DeleteManager' id=service.id email=forloop.counter0 %}" class="delete is-small"></a>
+                    {% endfor %}
+                {% endif %}
+                <form class="section" method = "POST">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="control">
+                            {% render_field form1.email type="text" class="input" placeholder="Email" %}
+                        </div>
+                    </div>
+                    <button name="add_manager" class="button is-fullwidth is-info">Add</button>
+                </form>
+
+                <!-- MESSAGES -->
+
+                <div class="tag is-medium">
+                    {% if error1 %}
+                        <div>
+                            <div class="content">
+                                {% for field in form1 %}
+                                    {% if field.errors %}
+                                        <p style="color: red;">{{ field.errors | striptags }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="content">
+                                {% if msg %}
+                                        <p style="color: red;">{{ field.errors | striptags }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <div class="content">
+                                <p style="color: blue;">Add/Remove Managers</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- END MESSAGES -->
+
+            </div>
+        </div>
+        <div class="column is-6">
+            <div class="box">
+                <h3 class="subtitle is-5">Manage Service</h3>
+                <form class="section has-text-left" method = "POST">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label class="label">Service ID</label>
+                        <div class="control">
+                            {% render_field form.id type="text" class="input is-rounded" placeholder="Service ID" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Service Name</label>
+                        <div class="control">
+                            {% render_field form.name type="text" class="input is-rounded" placeholder="Service Name" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Service Type</label>
+                        <div class="control">
+                            {% render_field form.service_type type="text" class="input is-rounded" placeholder="Service Type" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Bus Number</label>
+                        <div class="control">
+                            {% render_field form.bus_number type="text" class="input is-rounded" placeholder="Bus Number" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Number Of Seats</label>
+                        <div class="control">
+                            {% render_field form.seats type="number" class="input is-rounded" placeholder="Number of Seats" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Ticket Price</label>
+                        <div class="control">
+                            {% render_field form.price type="number" class="input is-rounded" placeholder="Ticket Price" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <label class="checkbox">
+                            {% render_field form.is_ready type="checkbox" %} READY
+                            </label>
+                        </div>
+                    </div>
+                    <button name="edit_service" class="button is-fullwidth is-info">Update</button>
+                </form>
+
+                <!-- MESSAGES -->
+
+                <div class="tag is-medium">
+                    {% if error %}
+                        {% if error == '1' %}
+                        <div>
+                            <div class="content">
+                                <p style="color: red;">{{ msg }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% elif success %}
+                        {% if success == '1' %}
+                        <div>
+                            <div class="content">
+                                <p style="color: green;">{{ msg }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div>
+                            <div class="content">
+                                <p style="color: blue;">Edit Service Details</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- END MESSAGES -->
+                <div class="section">
+                    <h3 class="subtitle is-5">Edit Route</h3>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="box">
+                <h3 class="subtitle is-5">Delete Service</h3>
+                <form class="section" method = "POST">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="control">
+                            {% render_field form2.password type="password" class="input" placeholder="Your Password" %}
+                        </div>
+                    </div>
+                    <button name="delete_service" class="button is-fullwidth is-info">Delete</button>
+                </form>
+
+                <!-- MESSAGES -->
+
+                <div class="tag is-medium">
+                    {% if error2 %}
+                        <div>
+                            <div class="content">
+                                <p style="color: red;">{{ msg2 }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <div class="content">
+                                <p style="color: blue;">Enter Password to Delete Service</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- END MESSAGES -->
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -11,4 +11,4 @@ class BusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BusService
-        fields = ('id', 'name', 'route', 'timing', 'price', 'bus_number', 'is_ready', )
+        fields = ('id', 'name', 'route', 'timing', 'price', 'bus_number', 'is_ready', 'provider', 'seats', )

@@ -39,7 +39,7 @@
                     {% if error %}
                         <div>
                             <div class="content">
-                                <p style="color: red;">{{ msg }}</p>    
+                                <p style="color: red;">{{ msg }}</p>
                             </div>
                         </div>
                     {% else %}
@@ -55,5 +55,102 @@
             </div>
         </div>
     </div>
-
+    {% if services|length > 0 %}
+    <div class="columns has-text-centered">
+        <div class="column">
+            <div class="box">
+                <h3 class="subtitle is-5">Your Bus Services</h3>
+                <div>
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                          <th><abbr title="Number">Sr. No.</abbr></th>
+                          <th>Name</th>
+                          <th>Bus Number</th>
+                          <th>Source</th>
+                          <th>Destination</th>
+                          <th>Departure</th>
+                          <th>Arrival</th>
+                          <th>Capacity</th>
+                          <th>Status</th>
+                        </tr>
+                  </thead>
+                  <tbody>
+                      {% for service in services %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="{% url 'person:EditBusService' id=service.id %}">{{ service.name }}</a></td>
+                            <td>{% if service.bus_number != '' %}{{ service.bus_number }}{% else %}-{% endif %}</td>
+                            <td>{% if service.route|length > 1 %}service.route[0]{% else %}-{% endif %}</td>
+                            <td>{% if service.route|length > 1 %}service.route[service.route|length - 1]{% else %}-{% endif %}</td>
+                            <td>{% if service.timing|length > 1 %}service.timing[0]{% else %}-{% endif %}</td>
+                            <td>{% if service.timing|length > 1 %}service.route[service.timing|length - 1]{% else %}-{% endif %}</td>
+                            <td>{{ service.seats }}</td>
+                            <td>{% if service.is_ready == False %}<span style="color: red;">DOWN</span>{% else %}<span style="color: green;">RUNNING</span>{% endif %}</td>
+                        <tr>
+                      {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="columns has-text-centered">
+        <div class="column is-4 is-offset-4">
+            <div class="box">
+                <div class="message">
+                    You do not manage any bus services
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if services1|length > 0 %}
+    <div class="columns has-text-centered">
+        <div class="column">
+            <div class="box">
+                <h3 class="subtitle is-5">Your Hotel Services</h3>
+                <div>
+                <table class="table is-fullwidth">
+                    <thead>
+                        <tr>
+                          <th><abbr title="Number">Sr. No.</abbr></th>
+                          <th>Name</th>
+                          <th>Bus Number</th>
+                          <th>Source</th>
+                          <th>Destination</th>
+                          <th>Departure</th>
+                          <th>Arrival</th>
+                        </tr>
+                  </thead>
+                  <tbody>
+                      {% for service in services1 %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="{% url 'person:EditBusService' id=service.id %}">{{ service.name }}</a></td>
+                            <td>{% if service.bus_number != '' %}{{ service.bus_number }}{% else %}-{% endif %}</td>
+                            <td>{% if service.route|length > 1 %}service.route[0]{% else %}-{% endif %}</td>
+                            <td>{% if service.route|length > 1 %}service.route[service.route|length - 1]{% else %}-{% endif %}</td>
+                            <td>{% if service.timing|length > 1 %}service.timing[0]{% else %}-{% endif %}</td>
+                            <td>{% if service.timing|length > 1 %}service.route[service.timing|length - 1]{% else %}-{% endif %}</td>
+                        <tr>
+                      {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="columns has-text-centered">
+        <div class="column is-4 is-offset-4">
+            <div class="box">
+                <div class="notification is-light">
+                    You do not manage any hotel services
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}

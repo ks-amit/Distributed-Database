@@ -28,6 +28,8 @@ class BusService(models.Model):
     price = models.IntegerField(default = 0)
     bus_number = models.CharField(max_length = 20, default = '', blank = True)
     is_ready = models.BooleanField(default = False)
+    provider = ArrayField(models.CharField(max_length = 100), default = default_array_field)
+    seats = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.name
