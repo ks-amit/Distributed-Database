@@ -11,6 +11,12 @@ GET_BUS_SERVICE = '/api/bus/list/email'
 UPDATE_BUS_SERVICE = '/api/bus/update'
 GET_BUS_SERVICE_ID = '/api/bus/get'
 
+INSERT_HOTEL_SERVICE = '/api/hotels/insert'
+UPDATE_HOTEL_SERVICE = '/api/hotels/update'
+GET_HOTEL_SERVICE_ID = '/api/hotels/get'
+DELETE_HOTEL_SERVICE = '/api/hotels/delete'
+GET_HOTEL_SERVICE = '/api/hotels/list/email'
+
 def get_database_name():
     queryset = models.DatabaseDetails.objects.exclude(name = 'primary').order_by('size')
     return queryset[0].name
@@ -21,6 +27,89 @@ def check_service_id(id):
         return False
     else:
         return True
+
+def insert_hotel_service(db_name, id, name, provider):
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + INSERT_HOTEL_SERVICE
+    DATA = {'id': id, 'name': name, 'provider': provider}
+    r = requests.post(db_addr, data = DATA)
+    if r.status_code == 201:
+        queryset.size += 1
+        queryset.save()
+        new_service = models.ServiceMetaData(id = id, name = name, type = 'H', db_name = db_name, provider = list([provider]))
+        new_service.save()
+    return r.status_code
+
+def update_hotel_service(id, name = None, price = None, city = None, area = None, is_ready = None, rooms = None, provider = None, check_in = None, check_out = None, provider_code = None):
+    metaData = models.ServiceMetaData.objects.filter(id = id)
+    metaData = metaData[0]
+    db_name = metaData.db_name
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + UPDATE_HOTEL_SERVICE
+    DATA = {'id': id}
+    if name != None:
+        DATA.update({'name': name})
+    if price != None:
+        DATA.update({'price': int(price)})
+    if city != None:
+        DATA.update({'city': city})
+    if area != None:
+        DATA.update({'area': area})
+    if is_ready != None:
+        DATA.update({'is_ready': is_ready})
+    if rooms != None:
+        DATA.update({'rooms': rooms})
+    if provider != None:
+        DATA.update({'provider': provider})
+    if check_in != None:
+        DATA.update({'check_in': check_in})
+    if check_out != None:
+        DATA.update({'check_out': check_out})
+    if provider_code != None:
+        DATA.update({'provider_code': provider_code})
+
+    r = requests.post(db_addr, data = DATA)
+    return r.status_code
+
+def get_hotel_service_by_id(id):
+    metaData = models.ServiceMetaData.objects.filter(id = id)
+    metaData = metaData[0]
+    db_name = metaData.db_name
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + GET_HOTEL_SERVICE_ID
+    DATA = {'id': id}
+    r = requests.get(db_addr, data = DATA)
+    return json.loads(r.text)[0]
+
+def get_hotel_service_by_email(email):
+    queryset = models.DatabaseDetails.objects.exclude(name = 'primary')
+    services = []
+    for db in queryset:
+        try:
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_HOTEL_SERVICE
+            DATA = {'email': email}
+            r = requests.post(db_addr, data = DATA)
+            S = json.loads(r.text)
+            services += S
+        except Exception as e:
+            print('EXCEPTION ', db.port)
+            print(e)
+            continue
+    return services
+
+def delete_hotel_service(id):
+    metaData = models.ServiceMetaData.objects.filter(id = id)
+    metaData = metaData[0]
+    db_name = metaData.db_name
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + DELETE_HOTEL_SERVICE
+    DATA = {'id': id}
+    r = requests.post(db_addr, data = DATA)
+    if r.status_code == 200:
+        queryset.size -= 1
+        queryset.save()
+        metaData.delete()
+    return r.status_code
 
 def insert_bus_service(db_name, id, name, provider):
     queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
@@ -60,7 +149,7 @@ def get_bus_service_by_id(id):
     r = requests.get(db_addr, data = DATA)
     return json.loads(r.text)[0]
 
-def update_bus_service(id, name = None, price = None, bus_number = None, is_ready = None, seats = None, provider = None, route = None, timing = None, provider_code = None, route_code = None, timing_code = None):
+def update_bus_service(id, name = None, price = None, bus_number = None, is_ready = None, seats = None, provider = None, route = None, timing = None, boarding_point = None, provider_code = None, route_code = None, timing_code = None, boarding_code = None):
     metaData = models.ServiceMetaData.objects.filter(id = id)
     metaData = metaData[0]
     db_name = metaData.db_name
@@ -79,6 +168,8 @@ def update_bus_service(id, name = None, price = None, bus_number = None, is_read
         DATA.update({'seats': seats})
     if provider != None:
         DATA.update({'provider': provider})
+    if boarding_point != None:
+        DATA.update({'boarding_point': boarding_point})
     if route != None:
         DATA.update({'route': route})
     if timing != None:
@@ -89,6 +180,8 @@ def update_bus_service(id, name = None, price = None, bus_number = None, is_read
         DATA.update({'route_code': route_code})
     if timing_code != None:
         DATA.update({'timing_code': timing_code})
+    if boarding_code != None:
+        DATA.update({'boarding_code': boarding_code})
     r = requests.post(db_addr, data = DATA)
     return r.status_code
 

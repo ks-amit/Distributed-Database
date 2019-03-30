@@ -55,7 +55,7 @@ class NewServiceForm(forms.Form):
     name = forms.CharField(max_length = 100, required = True)
     service_type = forms.ChoiceField(choices = CHOICES, widget = forms.Select)
 
-class EditServiceForm(forms.Form):
+class EditBusServiceForm(forms.Form):
     CHOICES = ( ('B', 'Bus Service'),
                 ('H', 'Hotel Service'),)
     id = forms.CharField(max_length = 100, required = True, widget = forms.TextInput(attrs={'readonly': True}))
@@ -65,3 +65,24 @@ class EditServiceForm(forms.Form):
     seats = forms.IntegerField(required = True)
     price = forms.IntegerField(required = True)
     is_ready = forms.BooleanField(required = False)
+
+class EditRouteForm(forms.Form):
+    stop_name = forms.CharField(max_length = 100, required = True)
+    day = forms.IntegerField(min_value = 0, required = True)
+    time_hour = forms.IntegerField(min_value = 0, max_value = 23, required = True)
+    time_mins = forms.IntegerField(min_value = 0, max_value = 59, required = True)
+    boarding_point = forms.CharField(max_length = 100, required = True)
+
+class EditHotelServiceForm(forms.Form):
+    CHOICES = ( ('B', 'Bus Service'),
+                ('H', 'Hotel Service'),)
+    id = forms.CharField(max_length = 100, required = True, widget = forms.TextInput(attrs={'readonly': True}))
+    name = forms.CharField(max_length = 100, required = True)
+    service_type = forms.CharField(widget = forms.TextInput(attrs={'readonly': True}))
+    city = forms.CharField(max_length = 100, required = True)
+    area = forms.CharField(max_length = 100, required = True)
+    rooms = forms.IntegerField(required = True)
+    price = forms.IntegerField(required = True)
+    is_ready = forms.BooleanField(required = False)
+    check_in = forms.CharField(max_length = 20, required = True)
+    check_out = forms.CharField(max_length = 20, required = True)

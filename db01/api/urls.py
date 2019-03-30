@@ -16,5 +16,11 @@ urlpatterns = [
     path('bus/list/email', views.BusServiceListEmail.as_view()),
     path('bus/update', views.UpdateBusService.as_view()),
     path('bus/get', views.GetBusService.as_view()),
+    path('hotels/list', views.HotelServiceList.as_view()),
+    path('hotels/insert', views.NewHotelService.as_view()),
+    path('hotels/update', views.UpdateHotelService.as_view()),
+    path('hotels/get', views.GetHotelService.as_view()),
+    path('hotels/delete', views.DeleteHotelService.as_view()),
+    path('hotels/list/email', views.HotelServiceListEmail.as_view()),
 
 ]

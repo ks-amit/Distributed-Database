@@ -42,13 +42,13 @@
                             {% for field in form1 %}
                                 {% if field.errors %}
                                     <div class="content">
-                                        <label style="color: red;">{{ field.errors | striptags }}</label>
+                                        <p style="color: red;">{{ field.errors | striptags }}</p>
                                     </div>
                                 {% endif %}
                             {% endfor %}
                             {% if msg1 %}
                             <div class="content">
-                                <p style="color: red;">{{ msg1 }}</p>
+                                        <p style="color: red;">{{ msg1 }}</p>
                             </div>
                             {% endif %}
                         </div>
@@ -65,6 +65,7 @@
 
             </div>
         </div>
+
         <div class="column is-6">
             <div class="box">
                 <h3 class="subtitle is-5">Manage Service</h3>
@@ -89,21 +90,39 @@
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Bus Number</label>
+                        <label class="label">City</label>
                         <div class="control">
-                            {% render_field form.bus_number type="text" class="input is-rounded" placeholder="Bus Number" %}
+                            {% render_field form.city type="text" class="input is-rounded" placeholder="City" %}
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Number Of Seats</label>
+                        <label class="label">Area</label>
                         <div class="control">
-                            {% render_field form.seats type="number" class="input is-rounded" placeholder="Number of Seats" %}
+                            {% render_field form.area type="text" class="input is-rounded" placeholder="Area" %}
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Ticket Price</label>
+                        <label class="label">Number Of Rooms</label>
                         <div class="control">
-                            {% render_field form.price type="number" class="input is-rounded" placeholder="Ticket Price" %}
+                            {% render_field form.rooms type="number" class="input is-rounded" placeholder="Number of Rooms" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Price (Per Night)</label>
+                        <div class="control">
+                            {% render_field form.price type="number" class="input is-rounded" placeholder="Price" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Check In Time (HH:MM) in 24 Hr Format</label>
+                        <div class="control">
+                            {% render_field form.check_in type="text" class="input is-rounded" placeholder="Check In (HH:MM)" %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Check Out Time (HH:MM) in 24 Hr Format</label>
+                        <div class="control">
+                            {% render_field form.check_out type="text" class="input is-rounded" placeholder="Check Out (HH:MM)" %}
                         </div>
                     </div>
                     <div class="field">
@@ -145,103 +164,9 @@
                 </div>
 
                 <!-- END MESSAGES -->
-                <div class="section">
-                    <h3 class="subtitle is-5">Edit Route</h3>
-                    <div>
-                        <table class="table is-fullwidth has-text-centered">
-                            <thead>
-                                <tr>
-                                  <th><abbr title="Number">Sr. No.</abbr></th>
-                                  <th>Name</th>
-                                  <th>Timing (D : H : M)</th>
-                                  <th>Boarding Point</th>
-                                  <th>Action</th>
-                                </tr>
-                          </thead>
-                          <tbody>
-                              {% for item in service.combined_list %}
-                                <tr>
-                                    <td>{{ forloop.counter0 }}</td>
-                                    <td>{{ item.0 }}</td>
-                                    <td>{{ item.1 }}</td>
-                                    <td>{{ item.2 }}</td>
-                                    <td><a href="{% url 'person:DeleteBusRoute' id=service.id index=forloop.counter0 %}" class="delete"></a></td>
-                                <tr>
-                              {% endfor %}
-                          </tbody>
-                        </table>
-                    </div>
-                    <form class="section has-text-left" method = "POST">
-                        {% csrf_token %}
-                            <div class="field">
-                                <label class="label">Stop Name</label>
-                                <div class="control">
-                                    {% render_field form3.stop_name type="text" class="input is-rounded" placeholder="Stop Name" %}
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label class="label">Boarding Point</label>
-                                <div class="control">
-                                    {% render_field form3.boarding_point type="text" class="input is-rounded" placeholder="Boardng Point" %}
-                                </div>
-                            </div>
-                            <label class="label">Timing in 24 Hour Format (Day : Hour : Minutes)</label>
-                            <div class="field is-horizontal">
-                                <div class="field-body columns">
-                                    <div class="field column">
-                                        <div class="control">
-                                            {% render_field form3.day type="number" class="input is-rounded" placeholder="Day Number" %}
-                                        </div>
-                                    </div>
-                                    <div class="field column">
-                                        <div class="control">
-                                            {% render_field form3.time_hour type="number" class="input is-rounded" placeholder="HH" %}
-                                        </div>
-                                    </div>
-                                    <div class="field column">
-                                        <div class="control">
-                                            {% render_field form3.time_mins type="number" class="input is-rounded" placeholder="MM" %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                                <button name="edit_route" class="button is-fullwidth is-info">Add</button>
-
-                    </form>
-
-                    <!-- MESSAGES -->
-
-                    <div class="tag is-medium">
-                        {% if error3 %}
-                            {% if error3 == '1' %}
-                            <div>
-                                <div class="content">
-                                    <p style="color: red;">{{ msg3 }}</p>
-                                </div>
-                            </div>
-                            {% endif %}
-                        {% elif success3 %}
-                            {% if success3 == '1' %}
-                            <div>
-                                <div class="content">
-                                    <p style="color: green;">{{ msg3 }}</p>
-                                </div>
-                            </div>
-                            {% endif %}
-                        {% else %}
-                            <div>
-                                <div class="content">
-                                    <p style="color: blue;">Modify Bus Route</p>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- END MESSAGES -->
-
-                </div>
             </div>
         </div>
+
         <div class="column">
             <div class="box">
                 <h3 class="subtitle is-5">Delete Service</h3>

@@ -61,37 +61,42 @@
             <div class="box">
                 <h3 class="subtitle is-5">Your Bus Services</h3>
                 <div>
-                <table class="table is-fullwidth">
-                    <thead>
-                        <tr>
-                          <th><abbr title="Number">Sr. No.</abbr></th>
-                          <th>Name</th>
-                          <th>Bus Number</th>
-                          <th>Source</th>
-                          <th>Destination</th>
-                          <th>Departure</th>
-                          <th>Arrival</th>
-                          <th>Capacity</th>
-                          <th>Status</th>
-                        </tr>
-                  </thead>
-                  <tbody>
-                      {% for service in services %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td><a href="{% url 'person:EditBusService' id=service.id %}">{{ service.name }}</a></td>
-                            <td>{% if service.bus_number != '' %}{{ service.bus_number }}{% else %}-{% endif %}</td>
-                            <td>{% if service.route|length > 1 %}service.route[0]{% else %}-{% endif %}</td>
-                            <td>{% if service.route|length > 1 %}service.route[service.route|length - 1]{% else %}-{% endif %}</td>
-                            <td>{% if service.timing|length > 1 %}service.timing[0]{% else %}-{% endif %}</td>
-                            <td>{% if service.timing|length > 1 %}service.route[service.timing|length - 1]{% else %}-{% endif %}</td>
-                            <td>{{ service.seats }}</td>
-                            <td>{% if service.is_ready == False %}<span style="color: red;">DOWN</span>{% else %}<span style="color: green;">RUNNING</span>{% endif %}</td>
-                        <tr>
-                      {% endfor %}
-                  </tbody>
-                </table>
-            </div>
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                              <th><abbr title="Number">Sr. No.</abbr></th>
+                              <th>Name</th>
+                              <th>Bus Number</th>
+                              <th>Source</th>
+                              <th>Destination</th>
+                              <th>Departure</th>
+                              <th>Arrival</th>
+                              <th>Capacity</th>
+                              <th>Status</th>
+                            </tr>
+                      </thead>
+                      <tbody>
+                          {% for service in services %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="{% url 'person:EditService' id=service.id %}">{{ service.name }}</a></td>
+                                <td>{% if service.bus_number != '' %}{{ service.bus_number }}{% else %}-{% endif %}</td>
+                                <td>{% if service.route|length > 1 %}{{service.route.0}}{% else %}-{% endif %}</td>
+                                <td>{% if service.route|length > 1 %}{% for route in service.route %}
+                                                                        {% if forloop.last %}{{route}}{% endif %}
+                                                                    {% endfor %}{% else %}-{% endif %}
+                                </td>
+                                <td>{% if service.timing|length > 1 %}{{service.timing.0}}{% else %}-{% endif %}</td>
+                                <td>{% if service.timing|length > 1 %}{% for timing in service.timing %}
+                                                                        {% if forloop.last %}{{timing}}{% endif %}
+                                                                    {% endfor %}{% else %}-{% endif %}</td>
+                                <td>{{ service.seats }}</td>
+                                <td>{% if service.is_ready == False %}<span style="color: red;">INACTIVE</span>{% else %}<span style="color: green;">RUNNING</span>{% endif %}</td>
+                            <tr>
+                          {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -117,23 +122,21 @@
                         <tr>
                           <th><abbr title="Number">Sr. No.</abbr></th>
                           <th>Name</th>
-                          <th>Bus Number</th>
-                          <th>Source</th>
-                          <th>Destination</th>
-                          <th>Departure</th>
-                          <th>Arrival</th>
+                          <th>City</th>
+                          <th>Area</th>
+                          <th>Rooms</th>
+                          <th>Status</th>
                         </tr>
                   </thead>
                   <tbody>
                       {% for service in services1 %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td><a href="{% url 'person:EditBusService' id=service.id %}">{{ service.name }}</a></td>
-                            <td>{% if service.bus_number != '' %}{{ service.bus_number }}{% else %}-{% endif %}</td>
-                            <td>{% if service.route|length > 1 %}service.route[0]{% else %}-{% endif %}</td>
-                            <td>{% if service.route|length > 1 %}service.route[service.route|length - 1]{% else %}-{% endif %}</td>
-                            <td>{% if service.timing|length > 1 %}service.timing[0]{% else %}-{% endif %}</td>
-                            <td>{% if service.timing|length > 1 %}service.route[service.timing|length - 1]{% else %}-{% endif %}</td>
+                            <td><a href="{% url 'person:EditService' id=service.id %}">{{ service.name }}</a></td>
+                            <td>{% if service.city != '' %}{{ service.city }}{% else %}-{% endif %}</td>
+                            <td>{% if service.area != '' %}{{ service.area }}{% else %}-{% endif %}</td>
+                            <td>{% if service.rooms != '' %}{{ service.rooms }}{% else %}-{% endif %}</td>
+                            <td>{% if service.is_ready == False %}<span style="color: red;">INACTIVE</span>{% else %}<span style="color: green;">RUNNING</span>{% endif %}</td>
                         <tr>
                       {% endfor %}
                   </tbody>
