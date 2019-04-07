@@ -102,6 +102,12 @@
                         </div>
                     </div>
                     <div class="field">
+                        <label class="label">Address</label>
+                        <div class="control">
+                            {% render_field form.address type="text" class="input is-rounded" placeholder="Address" %}
+                        </div>
+                    </div>
+                    <div class="field">
                         <label class="label">Number Of Rooms</label>
                         <div class="control">
                             {% render_field form.rooms type="number" class="input is-rounded" placeholder="Number of Rooms" %}

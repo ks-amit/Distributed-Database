@@ -81,6 +81,7 @@ class EditHotelServiceForm(forms.Form):
     service_type = forms.CharField(widget = forms.TextInput(attrs={'readonly': True}))
     city = forms.CharField(max_length = 100, required = True)
     area = forms.CharField(max_length = 100, required = True)
+    address = forms.CharField(max_length = 200, required = True)
     rooms = forms.IntegerField(required = True)
     price = forms.IntegerField(required = True)
     is_ready = forms.BooleanField(required = False)

@@ -40,7 +40,7 @@ def insert_hotel_service(db_name, id, name, provider):
         new_service.save()
     return r.status_code
 
-def update_hotel_service(id, name = None, price = None, city = None, area = None, is_ready = None, rooms = None, provider = None, check_in = None, check_out = None, provider_code = None):
+def update_hotel_service(id, name = None, price = None, city = None, area = None, is_ready = None, address = None, rooms = None, provider = None, check_in = None, check_out = None, provider_code = None):
     metaData = models.ServiceMetaData.objects.filter(id = id)
     metaData = metaData[0]
     db_name = metaData.db_name
@@ -51,6 +51,8 @@ def update_hotel_service(id, name = None, price = None, city = None, area = None
         DATA.update({'name': name})
     if price != None:
         DATA.update({'price': int(price)})
+    if address != None:
+        DATA.update({'address': address})
     if city != None:
         DATA.update({'city': city})
     if area != None:

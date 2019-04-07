@@ -114,7 +114,7 @@ class EditServiceView(View):
 
     def get_form_1(self, id):
         S = utils.get_hotel_service_by_id(id)
-        form = forms.EditHotelServiceForm(initial = {'id': id, 'service_type': 'Hotel', 'name': S.get('name'), 'city': S.get('city'), 'area': S.get('area'), 'rooms': S.get('rooms'), 'check_in': S.get('check_in'), 'check_out': S.get('check_out'), 'price': S.get('price'), 'is_ready': S.get('is_ready')})
+        form = forms.EditHotelServiceForm(initial = {'id': id, 'service_type': 'Hotel', 'name': S.get('name'), 'city': S.get('city'), 'address': S.get('address'), 'area': S.get('area'), 'rooms': S.get('rooms'), 'check_in': S.get('check_in'), 'check_out': S.get('check_out'), 'price': S.get('price'), 'is_ready': S.get('is_ready')})
         return form
 
     def get_service(self, id):
@@ -249,6 +249,7 @@ class EditServiceView(View):
                                                     city = form.cleaned_data.get('city'),
                                                     area = form.cleaned_data.get('area'),
                                                     rooms = form.cleaned_data.get('rooms'),
+                                                    address = form.cleaned_data.get('address'),
                                                     is_ready = form.cleaned_data.get('is_ready'),
                                                     id = id,
                                                     check_in = form.cleaned_data.get('check_in'),

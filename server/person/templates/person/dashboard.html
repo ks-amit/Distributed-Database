@@ -5,3 +5,31 @@
 {% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
 
 {% block title_block %}Dashboard{% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+        <h3 class="subtitle is-4">PLAN YOUR TRIP</h3>
+        <div class="columns">
+            <div class="column">
+                <div class="box">
+                    <article class="message">
+                      <div class="message-body">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac <em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor, tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
+                      </div>
+                    </article>
+                </div>
+            </div>
+            <div class="column">
+                <div class="box">
+                    <div class="notification is-light">
+                      Primar lorem ipsum dolor sit amet, consectetur
+                      adipiscing elit lorem ipsum dolor. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Sit amet,
+                      consectetur adipiscing elit
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

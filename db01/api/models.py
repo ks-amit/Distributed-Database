@@ -44,6 +44,7 @@ class HotelService(models.Model):
     name = models.CharField(null = False, max_length = 100)
     city = models.CharField(max_length = 100, blank = True, default = '')
     area = models.CharField(max_length = 100, blank = True, default = '')
+    address = models.CharField(max_length = 200, blank = True, default = '')
     check_in = models.CharField(max_length = 10, blank = True)
     check_out = models.CharField(max_length = 10, blank = True)
     price = models.IntegerField(default = 0)

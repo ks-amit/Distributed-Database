@@ -17,4 +17,4 @@ class HotelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HotelService
-        fields = ('id', 'name', 'city', 'area', 'check_in', 'check_out', 'price', 'is_ready', 'provider', 'rooms', )
+        fields = ('id', 'name', 'city', 'area', 'check_in', 'check_out', 'price', 'is_ready', 'provider', 'rooms', 'address', )

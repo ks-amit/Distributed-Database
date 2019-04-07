@@ -240,6 +240,8 @@ class UpdateHotelService(APIView):
                     service.city = request.data.get('city')
                 if request.data.get('area') != None:
                     service.area = request.data.get('area')
+                if request.data.get('address') != None:
+                    service.address = request.data.get('address')
                 if request.data.get('rooms') != None:
                     service.rooms = request.data.get('rooms')
                 if request.data.get('is_ready') != None:
