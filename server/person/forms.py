@@ -85,5 +85,5 @@ class EditHotelServiceForm(forms.Form):
     rooms = forms.IntegerField(required = True)
     price = forms.IntegerField(required = True)
     is_ready = forms.BooleanField(required = False)
-    check_in = forms.CharField(max_length = 20, required = True)
-    check_out = forms.CharField(max_length = 20, required = True)
+    check_in = forms.TimeField(required = True)
+    check_out = forms.TimeField(required = True)

@@ -1,5 +1,6 @@
 from . import models
 import requests, json
+from django.db.models import F
 
 INSERT_ADDR = '/api/user/insert'
 GET_ADDR = '/api/user/get'
@@ -16,6 +17,9 @@ UPDATE_HOTEL_SERVICE = '/api/hotels/update'
 GET_HOTEL_SERVICE_ID = '/api/hotels/get'
 DELETE_HOTEL_SERVICE = '/api/hotels/delete'
 GET_HOTEL_SERVICE = '/api/hotels/list/email'
+GET_HOTEL_SERVICE_BY_CITY = '/api/hotels/list/city'
+
+GET_AVAILABLE_HOTELS = '/api/bookings/hotels/get'
 
 def get_database_name():
     queryset = models.DatabaseDetails.objects.exclude(name = 'primary').order_by('size')
@@ -27,6 +31,42 @@ def check_service_id(id):
         return False
     else:
         return True
+
+def get_hotel_bookings(city, area, check_in, check_out):
+    dbs = models.DatabaseDetails.objects.exclude(name = 'primary')
+    D = {}
+    for db in dbs:
+        try:
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_AVAILABLE_HOTELS
+            DATA = {'city': city, 'area': area, 'check_in': check_in, 'check_out': check_out}
+            r = requests.get(db_addr, data = DATA)
+            print(json.loads(r.text))
+        except:
+            continue
+
+    return D
+
+def get_hotel_services_city(city, area = None):
+    dbs = models.DatabaseDetails.objects.exclude(name = 'primary')
+    D = {}
+    A = []
+    for db in dbs:
+        try:
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_HOTEL_SERVICE_BY_CITY
+            if area == None:
+                DATA = {'city': city.upper()}
+            else:
+                DATA = {'city': city.upper(), 'area': area.upper()}
+            r = requests.post(db_addr, data = DATA)
+            S = json.loads(r.text)
+            for dic in S:
+                if dic.get('id') not in D:
+                    D[dic.get('id')] = 1
+                    A.append(dic)
+        except:
+            continue
+
+    return A
 
 def insert_hotel_service(db_name, id, name, provider):
     queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
@@ -54,9 +94,9 @@ def update_hotel_service(id, name = None, price = None, city = None, area = None
     if address != None:
         DATA.update({'address': address})
     if city != None:
-        DATA.update({'city': city})
+        DATA.update({'city': city.upper()})
     if area != None:
-        DATA.update({'area': area})
+        DATA.update({'area': area.upper()})
     if is_ready != None:
         DATA.update({'is_ready': is_ready})
     if rooms != None:
@@ -171,7 +211,7 @@ def update_bus_service(id, name = None, price = None, bus_number = None, is_read
     if provider != None:
         DATA.update({'provider': provider})
     if boarding_point != None:
-        DATA.update({'boarding_point': boarding_point})
+        DATA.update({'boarding_point': boarding_point.upper()})
     if route != None:
         DATA.update({'route': route})
     if timing != None:

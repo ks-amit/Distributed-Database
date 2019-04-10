@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Search Hotels{% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+
+        <div class="subtitle is-3">
+            SEARCH HOTELS
+        </div>
+        <div class="columns">
+            <div class="column is-8 is-offset-2">
+                <div class="box">
+                    <form class="section" method = "POST">
+                        {% csrf_token %}
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Destination</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control is-expanded">
+                                        {% render_field form.area type="text" class="input is-rounded" placeholder="Landmark" %}
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="control is-expanded">
+                                        {% render_field form.city type="text" class="input is-rounded" placeholder="City" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Dates</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control is-expanded">
+                                        {% render_field form.check_in type="date" class="input is-rounded" placeholder="Check In" %}
+                                    </div>
+                                    <label class="label">Check In</label>
+                                </div>
+                                <div class="field">
+                                    <div class="control is-expanded">
+                                        {% render_field form.check_out type="date" class="input is-rounded" placeholder="Check Out" %}
+                                    </div>
+                                    <label class="label">Check Out</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column is-4 is-offset-4">
+                                <button name="user_privilage" class="button is-rounded is-primary is-medium is-fullwidth">Search</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="tag is-medium">
+                        {% if error %}
+                            <div>
+                                <div class="content">
+                                    <p style="color: red;">{{ msg }}</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div>
+                                <div class="content">
+                                    <p style="color: blue;">Enter Destination and Dates to Search Hotels</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

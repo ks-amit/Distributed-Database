@@ -29,6 +29,7 @@ class ServiceMetaData(models.Model):
     type = models.CharField(max_length = 1, choices = CHOICES, null = False)
     db_name = models.CharField(max_length = 50, null = False)
     provider = ArrayField(models.CharField(max_length = 100), default = default_array_field)
+    capacity = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.name

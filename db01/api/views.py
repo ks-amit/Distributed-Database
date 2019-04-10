@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import User, BusService, HotelService
-from .serializers import UserSerializer, BusSerializer, HotelSerializer
+from .models import User, BusService, HotelService, HotelBooking
+from .serializers import UserSerializer, BusSerializer, HotelSerializer, HotelBookingSerializer
 from rest_framework import status
+import json
 
 class UserList(APIView):
 
@@ -282,6 +283,17 @@ class HotelServiceListEmail(APIView):
         serializer = HotelSerializer(services, many = True)
         return Response(serializer.data)
 
+class GetHotelByCity(APIView):
+
+    def post(self, request, format = None):
+        if request.data.get('area') == None or request.data.get('area') == '':
+            services = HotelService.objects.filter(city = request.data.get('city'))
+        else:
+            services = HotelService.objects.filter(city = request.data.get('city'), area = request.data.get('area'))
+        print(services.count())
+        serializer = HotelSerializer(services, many = True)
+        return Response(serializer.data)
+
 class DeleteHotelService(APIView):
 
     def get_object(self, id):
@@ -295,3 +307,24 @@ class DeleteHotelService(APIView):
             service = service[0]
             service.delete()
             return Response(status = status.HTTP_200_OK)
+
+class HotelBookingList(APIView):
+
+    def get(self, request, format = None):
+        services = HotelBooking.objects.all()
+        serializer = HotelBookingSerializer(services, many = True)
+        D = {'name': 'Amit', 'age': '20'}
+        return Response(serializer.data)
+
+# class GetHotelByCity(APIView):
+#
+#     def get_object(self, city, area = None):
+#         if area == None or area == '':
+#             return HotelBooking.objects.filter(city = city.upper())
+#         else:
+#             return HotelBooking.objects.filter(city = city.upper(), area = area.upper())
+#
+#     def get(self, request, format = None):
+#         queryset = self.get_object(request.data.get('city'), request.data.get('area'))
+#         serializer = HotelBookingSerializer(queryset, many = True)
+#         return Response(serializer.data, status = status.HTTP_200_OK)

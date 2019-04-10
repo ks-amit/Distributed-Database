@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Hotel Details{% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+
+        <div class="subtitle is-3">
+            {{ hotel.name }}
+        </div>
+
+        <div class="columns has-text-left">
+            <div class="column is-8 is-offset-2">
+                <div class="container">
+                    <div class="subtitle is-5">Hotel Description:</div>
+                </div>
+                <div class="box">
+
+                </div>
+
+                <div class="container">
+                    <div class="subtitle is-5">Location:</div>
+                </div>
+                <div class="box">
+                    <div class="box">
+                        {{ hotel.address }}
+                    </div>
+                    <div class="container">
+                        <b>Area</b> - {{ hotel.area }}
+                    </div>
+                    <div class="container">
+                        <b>City</b> - {{ hotel.city }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

@@ -22,5 +22,7 @@ urlpatterns = [
     path('hotels/get', views.GetHotelService.as_view()),
     path('hotels/delete', views.DeleteHotelService.as_view()),
     path('hotels/list/email', views.HotelServiceListEmail.as_view()),
+    path('hotels/list/city', views.GetHotelByCity.as_view()),
+    path('bookings/hotels/list', views.HotelBookingList.as_view()),
 
 ]

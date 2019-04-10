@@ -1,4 +1,4 @@
-{% extends 'person/base.html' %}
+{% extends 'base.html' %}
 {% load widget_tweaks %}
 
 {% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
@@ -122,13 +122,13 @@
                     <div class="field">
                         <label class="label">Check In Time (HH:MM) in 24 Hr Format</label>
                         <div class="control">
-                            {% render_field form.check_in type="text" class="input is-rounded" placeholder="Check In (HH:MM)" %}
+                            {% render_field form.check_in type="time" class="input is-rounded" placeholder="Check In (HH:MM)" %}
                         </div>
                     </div>
                     <div class="field">
                         <label class="label">Check Out Time (HH:MM) in 24 Hr Format</label>
                         <div class="control">
-                            {% render_field form.check_out type="text" class="input is-rounded" placeholder="Check Out (HH:MM)" %}
+                            {% render_field form.check_out type="time" class="input is-rounded" placeholder="Check Out (HH:MM)" %}
                         </div>
                     </div>
                     <div class="field">

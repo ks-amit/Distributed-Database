@@ -194,6 +194,7 @@ class EditServiceView(View):
                                                     id = id)
                     if r == 200:
                         service.name = form.cleaned_data.get('name')
+                        service.capacity = int(form.cleaned_data.get('seats'))
                         service.save()
                         return render(request, self.template_name, {'form': self.get_form(id), 'success': '1', 'msg': 'INFORMATION UPDATED', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'form3': forms.EditRouteForm(), 'service': self.get_service(id), 'type': get_type(request)})
                     else:
@@ -256,6 +257,7 @@ class EditServiceView(View):
                                                     check_out = form.cleaned_data.get('check_out'))
                     if r == 200:
                         service.name = form.cleaned_data.get('name')
+                        service.capacity = int(form.cleaned_data.get('rooms'))
                         service.save()
                         return render(request, self.template_name_1, {'form': self.get_form_1(id), 'success': '1', 'msg': 'INFORMATION UPDATED', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
                     else:

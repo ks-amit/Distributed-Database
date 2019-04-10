@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Search Hotels{% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+
+        <div class="subtitle is-3">
+            SEARCH RESULTS
+            {% if hotels|length > 0 %}
+                ({{ hotels|length }})
+            {% endif %}
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <div>
+                    {% if hotels|length > 0 %}
+                        {% for hotel in hotels %}
+                            <form class="box">
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">{{ forloop.counter }}.</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="subtitle is-5">
+                                                <strong>{{ hotel.name }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <a class="button" href="{% url 'hotels:Details' id=hotel.id %}">
+                                                <div class="subtitle is-6">Book Hotel</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label"></label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="subtitle is-6">
+                                                {{ hotel.area }}, {{ hotel.city }}
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <div class="subtitle is-6">
+                                                <b>INR {{ hotel.price }}</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        {% endfor %}
+                    {% else %}
+                        <div class="section">
+                            <div class="columns">
+                                <div class="column is-8 is-offset-2">
+                                    <div class="message box">
+                                        <div class="subtitle" style="color: blue;">No Hotels Found</div>
+                                        <a class="button is-medium is-primary" href="{% url 'hotels:Search' %}">Search Again</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
