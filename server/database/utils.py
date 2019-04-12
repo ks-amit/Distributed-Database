@@ -19,11 +19,19 @@ DELETE_HOTEL_SERVICE = '/api/hotels/delete'
 GET_HOTEL_SERVICE = '/api/hotels/list/email'
 GET_HOTEL_SERVICE_BY_CITY = '/api/hotels/list/city'
 
-GET_AVAILABLE_HOTELS = '/api/bookings/hotels/get'
+HOTEL_BOOKING = '/api/bookings/hotel/new'
+GET_HOTEL_BOOKING_BY_HOTEL = '/api/bookings/hotel/get'
 
 def get_database_name():
     queryset = models.DatabaseDetails.objects.exclude(name = 'primary').order_by('size')
     return queryset[0].name
+
+def check_booking_id(id):
+    queryset = models.BookingMetaData.objects.filter(id = id)
+    if queryset.count() > 0:
+        return False
+    else:
+        return True
 
 def check_service_id(id):
     queryset = models.ServiceMetaData.objects.filter(id = id)
@@ -32,19 +40,37 @@ def check_service_id(id):
     else:
         return True
 
-def get_hotel_bookings(city, area, check_in, check_out):
+def new_hotel_booking(db_name, id, service_id, email, in_date, out_date, booking_date, rooms, bill):
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + HOTEL_BOOKING
+    DATA = {'id': id, 'service_id': service_id, 'email': email, 'in_date': in_date, 'out_date': out_date, 'booking_date': booking_date, 'rooms': rooms, 'bill': bill}
+    r = requests.post(db_addr, data = DATA)
+    if r.status_code == 201:
+        queryset.size += 1
+        queryset.save()
+        new_booking = models.BookingMetaData(id = id, type = 'H', db_name = db_name, start_date = in_date)
+        new_booking.save()
+    return r.status_code
+
+def get_hotel_bookings_by_hotel(service_id, in_date, out_date):
     dbs = models.DatabaseDetails.objects.exclude(name = 'primary')
     D = {}
+    counter = 0
     for db in dbs:
         try:
-            db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_AVAILABLE_HOTELS
-            DATA = {'city': city, 'area': area, 'check_in': check_in, 'check_out': check_out}
-            r = requests.get(db_addr, data = DATA)
-            print(json.loads(r.text))
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_HOTEL_BOOKING_BY_HOTEL
+            print(db_addr)
+            DATA = {'service_id': service_id, 'in_date': in_date, 'out_date': out_date}
+            r = requests.post(db_addr, data = DATA)
+            S = json.loads(r.text)
+            for dic in S:
+                if dic.get('id') not in D:
+                    D[dic.get('id')] = 1
+                    counter += dic.get('rooms')
         except:
             continue
 
-    return D
+    return counter
 
 def get_hotel_services_city(city, area = None):
     dbs = models.DatabaseDetails.objects.exclude(name = 'primary')

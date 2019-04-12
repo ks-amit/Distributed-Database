@@ -34,7 +34,7 @@
                                             </div>
                                         </div>
                                         <div class="field">
-                                            <a class="button" href="{% url 'hotels:Details' id=hotel.id %}">
+                                            <a class="button" href="{% url 'hotels:Details' id=hotel.id %}?checkin={{ request.GET.checkin|urlencode }}&checkout={{ request.GET.checkout|urlencode }}">
                                                 <div class="subtitle is-6">Book Hotel</div>
                                             </a>
                                         </div>

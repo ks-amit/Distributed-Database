@@ -7,3 +7,4 @@ class UserAdmin(admin.ModelAdmin):
 admin.site.register(models.User)
 admin.site.register(models.BusService)
 admin.site.register(models.HotelService)
+admin.site.register(models.HotelBooking)

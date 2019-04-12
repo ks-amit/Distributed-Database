@@ -23,6 +23,8 @@ urlpatterns = [
     path('hotels/delete', views.DeleteHotelService.as_view()),
     path('hotels/list/email', views.HotelServiceListEmail.as_view()),
     path('hotels/list/city', views.GetHotelByCity.as_view()),
-    path('bookings/hotels/list', views.HotelBookingList.as_view()),
+    path('bookings/hotel/list', views.HotelBookingList.as_view()),
+    path('bookings/hotel/new', views.NewHotelBooking.as_view()),
+    path('bookings/hotel/get', views.HotelBookingByHotel.as_view()),
 
 ]

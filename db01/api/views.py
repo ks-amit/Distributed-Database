@@ -290,7 +290,6 @@ class GetHotelByCity(APIView):
             services = HotelService.objects.filter(city = request.data.get('city'))
         else:
             services = HotelService.objects.filter(city = request.data.get('city'), area = request.data.get('area'))
-        print(services.count())
         serializer = HotelSerializer(services, many = True)
         return Response(serializer.data)
 
@@ -313,8 +312,42 @@ class HotelBookingList(APIView):
     def get(self, request, format = None):
         services = HotelBooking.objects.all()
         serializer = HotelBookingSerializer(services, many = True)
-        D = {'name': 'Amit', 'age': '20'}
         return Response(serializer.data)
+
+class HotelBookingByHotel(APIView):
+
+    def get_object(self, service_id, in_date, out_date):
+        queryset = HotelBooking.objects.filter(service_id = service_id, in_date__lt = out_date, out_date__gt = in_date)
+        return queryset
+
+    def post(self, request, format = None):
+        print('REC')
+        bookings = self.get_object(service_id = request.data.get('service_id'), in_date = request.data.get('in_date'), out_date = request.data.get('out_date'))
+        print(bookings)
+        serializer = HotelBookingSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+class NewHotelBooking(APIView):
+
+    def post(self, request, format = None):
+        booking = HotelBooking.objects.filter(id = request.data.get('id'))
+        if not booking:
+            try:
+                new_booking = HotelBooking( id = request.data.get('id'),
+                                            service_id = request.data.get('service_id'),
+                                            email = request.data.get('email'),
+                                            in_date = request.data.get('in_date'),
+                                            out_date = request.data.get('out_date'),
+                                            booking_date = request.data.get('booking_date'),
+                                            rooms = request.data.get('rooms'),
+                                            bill = request.data.get('bill'))
+                new_booking.full_clean()
+                new_booking.save()
+                return Response(status = status.HTTP_201_CREATED)
+            except:
+                return Response(status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status = status.HTTP_400_BAD_REQUEST)
 
 # class GetHotelByCity(APIView):
 #

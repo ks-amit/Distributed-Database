@@ -33,3 +33,15 @@ class ServiceMetaData(models.Model):
 
     def __str__(self):
         return self.name
+
+class BookingMetaData(models.Model):
+
+    CHOICES = ( ('B', 'Bus'),
+                ('H', 'Hotel'),)
+    id = models.CharField(primary_key = True, max_length = 64, null = False)
+    type = models.CharField(max_length = 1, choices = CHOICES, null = False)
+    db_name = models.CharField(max_length = 50, null = False)
+    start_date = models.DateField()
+
+    def __str__(self):
+        return self.id
