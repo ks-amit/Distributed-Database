@@ -114,7 +114,7 @@ class EditServiceView(View):
 
     def get_form_1(self, id):
         S = utils.get_hotel_service_by_id(id)
-        form = forms.EditHotelServiceForm(initial = {'id': id, 'service_type': 'Hotel', 'name': S.get('name'), 'city': S.get('city'), 'address': S.get('address'), 'area': S.get('area'), 'rooms': S.get('rooms'), 'check_in': S.get('check_in'), 'check_out': S.get('check_out'), 'price': S.get('price'), 'is_ready': S.get('is_ready')})
+        form = forms.EditHotelServiceForm(initial = {'id': id, 'service_type': 'Hotel', 'name': S.get('name'), 'description': S.get('description'), 'city': S.get('city'), 'address': S.get('address'), 'area': S.get('area'), 'rooms': S.get('rooms'), 'check_in': S.get('check_in'), 'check_out': S.get('check_out'), 'price': S.get('price'), 'is_ready': S.get('is_ready')})
         return form
 
     def get_service(self, id):
@@ -253,6 +253,7 @@ class EditServiceView(View):
                                                     address = form.cleaned_data.get('address'),
                                                     is_ready = form.cleaned_data.get('is_ready'),
                                                     id = id,
+                                                    description = form.cleaned_data.get('description'),
                                                     check_in = form.cleaned_data.get('check_in'),
                                                     check_out = form.cleaned_data.get('check_out'))
                     if r == 200:
@@ -263,7 +264,8 @@ class EditServiceView(View):
                     else:
                         return render(request, self.template_name_1, {'form': self.get_form_1(id), 'error': '1', 'msg': 'NETWORK ERROR', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
                 else:
-                    return render(request, self.template_name_1, {'form': self.get_form(id), 'error': '1', 'msg': 'INVALID DETAILS', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
+                    print(form.errors)
+                    return render(request, self.template_name_1, {'form': self.get_form_1(id), 'error': '1', 'msg': 'INVALID DETAILS', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
 
 class DeleteManagerView(View):
 

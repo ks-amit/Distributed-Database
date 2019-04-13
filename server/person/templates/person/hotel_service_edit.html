@@ -108,7 +108,13 @@
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Number Of Rooms</label>
+                        <label class="label">Description</label>
+                        <div class="control">
+                            {% render_field form.description type="textarea" class="textarea" placeholder="List all facilities the hotel provides here. You may provide links and other necessary information that the customer needs to know." %}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Rooms</label>
                         <div class="control">
                             {% render_field form.rooms type="number" class="input is-rounded" placeholder="Number of Rooms" %}
                         </div>
@@ -116,7 +122,7 @@
                     <div class="field">
                         <label class="label">Price (Per Night)</label>
                         <div class="control">
-                            {% render_field form.price type="number" class="input is-rounded" placeholder="Price" %}
+                            {% render_field form.price type="number" class="input is-rounded" placeholder="Price in INR" %}
                         </div>
                     </div>
                     <div class="field">

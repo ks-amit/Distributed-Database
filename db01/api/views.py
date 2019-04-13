@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User, BusService, HotelService, HotelBooking
-from .serializers import UserSerializer, BusSerializer, HotelSerializer, HotelBookingSerializer
+from .serializers import UserSerializer, BusSerializer, HotelSerializer, HotelBookingSerializer, HotelBookingInfoSerializer
 from rest_framework import status
 import json
 
@@ -245,6 +245,8 @@ class UpdateHotelService(APIView):
                     service.address = request.data.get('address')
                 if request.data.get('rooms') != None:
                     service.rooms = request.data.get('rooms')
+                if request.data.get('description') != None:
+                    service.description = request.data.get('description')
                 if request.data.get('is_ready') != None:
                     service.is_ready = request.data.get('is_ready')
                 if request.data.get('check_in') != None:
@@ -348,6 +350,15 @@ class NewHotelBooking(APIView):
                 return Response(status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status = status.HTTP_400_BAD_REQUEST)
+
+class GetHotelBookingByUser(APIView):
+
+    def get(self, request, email, format = None):
+        print('HERE')
+        print(email)
+        bookings = HotelBooking.objects.filter(email = email)
+        serializer = HotelBookingInfoSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
 
 # class GetHotelByCity(APIView):
 #

@@ -10,11 +10,18 @@
 
     <div class="container has-text-centered">
 
-        <div class="subtitle is-3">
-            SEARCH RESULTS
-            {% if hotels|length > 0 %}
-                ({{ hotels|length }})
-            {% endif %}
+        <div class="columns">
+            <div class="column is-4 is-offset-4">
+                <div class="subtitle is-3">
+                    SEARCH RESULTS
+                    {% if hotels|length > 0 %}
+                        ({{ hotels|length }})
+                    {% endif %}
+                </div>
+            </div>
+            <div class="column is-2 is-offset-2">
+                <a class="button" href="{% url 'hotels:Search' %}">Search Again</a>
+            </div>
         </div>
 
         <div class="columns">
@@ -34,7 +41,7 @@
                                             </div>
                                         </div>
                                         <div class="field">
-                                            <a class="button" href="{% url 'hotels:Details' id=hotel.id %}?checkin={{ request.GET.checkin|urlencode }}&checkout={{ request.GET.checkout|urlencode }}">
+                                            <a class="button is-rounded is-light" href="{% url 'hotels:Details' id=hotel.id %}?checkin={{ request.GET.checkin|urlencode }}&checkout={{ request.GET.checkout|urlencode }}">
                                                 <div class="subtitle is-6">Book Hotel</div>
                                             </a>
                                         </div>
@@ -69,7 +76,7 @@
                                     </div>
                                 </div>
                             </div>
-                        <div>
+                        </div>
                     {% endif %}
                 </div>
             </div>

@@ -1,6 +1,7 @@
 from . import models
 import requests, json
 from django.db.models import F
+from urllib.parse import quote, unquote
 
 INSERT_ADDR = '/api/user/insert'
 GET_ADDR = '/api/user/get'
@@ -21,6 +22,7 @@ GET_HOTEL_SERVICE_BY_CITY = '/api/hotels/list/city'
 
 HOTEL_BOOKING = '/api/bookings/hotel/new'
 GET_HOTEL_BOOKING_BY_HOTEL = '/api/bookings/hotel/get'
+GET_HOTEL_BOOKING_BY_USER = '/api/bookings/hotel/user'
 
 def get_database_name():
     queryset = models.DatabaseDetails.objects.exclude(name = 'primary').order_by('size')
@@ -39,6 +41,24 @@ def check_service_id(id):
         return False
     else:
         return True
+
+def get_hotel_booking_by_user(email):
+    dbs = models.DatabaseDetails.objects.exclude(name = 'primary')
+    A = []
+    D = {}
+    for db in dbs:
+        try:
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_HOTEL_BOOKING_BY_USER + '/' + quote(email)
+            r = requests.get(db_addr)
+            S = json.loads(r.text)
+            for dic in S:
+                if dic.get('id') not in D:
+                    A.append(dic)
+                    D[dic.get('id')] = 1
+        except:
+            continue
+
+    return A
 
 def new_hotel_booking(db_name, id, service_id, email, in_date, out_date, booking_date, rooms, bill):
     queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
@@ -106,7 +126,7 @@ def insert_hotel_service(db_name, id, name, provider):
         new_service.save()
     return r.status_code
 
-def update_hotel_service(id, name = None, price = None, city = None, area = None, is_ready = None, address = None, rooms = None, provider = None, check_in = None, check_out = None, provider_code = None):
+def update_hotel_service(id, name = None, price = None, city = None, area = None, is_ready = None, address = None, description = None, rooms = None, provider = None, check_in = None, check_out = None, provider_code = None):
     metaData = models.ServiceMetaData.objects.filter(id = id)
     metaData = metaData[0]
     db_name = metaData.db_name
@@ -123,6 +143,8 @@ def update_hotel_service(id, name = None, price = None, city = None, area = None
         DATA.update({'city': city.upper()})
     if area != None:
         DATA.update({'area': area.upper()})
+    if description != None:
+        DATA.update({'description': description})
     if is_ready != None:
         DATA.update({'is_ready': is_ready})
     if rooms != None:
