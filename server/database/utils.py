@@ -23,6 +23,9 @@ GET_HOTEL_SERVICE_BY_CITY = '/api/hotels/list/city'
 HOTEL_BOOKING = '/api/bookings/hotel/new'
 GET_HOTEL_BOOKING_BY_HOTEL = '/api/bookings/hotel/get'
 GET_HOTEL_BOOKING_BY_USER = '/api/bookings/hotel/user'
+GET_HOTEL_BOOKING_BY_ID = '/api/bookings/hotel/id'
+DELETE_HOTEL_BOOKING = '/api/bookings/hotel/delete'
+GET_HOTEL_BOOKING_BY_DATE = '/api/bookings/hotel/date'
 
 def get_database_name():
     queryset = models.DatabaseDetails.objects.exclude(name = 'primary').order_by('size')
@@ -41,6 +44,39 @@ def check_service_id(id):
         return False
     else:
         return True
+
+def get_hotel_booking_by_date(id, date):
+    metaData = models.ServiceMetaData.objects.filter(id = id)
+    metaData = metaData[0]
+    db_name = metaData.db_name
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + GET_HOTEL_BOOKING_BY_DATE
+    DATA = {'id': id, 'date': date}
+    r = requests.post(db_addr, data = DATA)
+    return json.loads(r.text)
+
+def delete_hotel_booking(id):
+    metaData = models.BookingMetaData.objects.filter(id = id)
+    metaData = metaData[0]
+    db_name = metaData.db_name
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + DELETE_HOTEL_BOOKING
+    DATA = {'id': id}
+    r = requests.post(db_addr, data = DATA)
+    if r.status_code == 200:
+        queryset.size -= 1
+        queryset.save()
+        metaData.delete()
+    return r.status_code
+
+def get_hotel_booking_by_id(id):
+    metaData = models.BookingMetaData.objects.filter(id = id)
+    metaData = metaData[0]
+    db_name = metaData.db_name
+    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
+    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + GET_HOTEL_BOOKING_BY_ID + '/' + quote(id)
+    r = requests.get(db_addr)
+    return json.loads(r.text)[0]
 
 def get_hotel_booking_by_user(email):
     dbs = models.DatabaseDetails.objects.exclude(name = 'primary')

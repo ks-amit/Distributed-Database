@@ -13,3 +13,6 @@ class HotelBookForm(forms.Form):
     out_date = forms.CharField(max_length = 50, required = True)
     rooms = forms.IntegerField(required = True)
     available = forms.IntegerField(required = True, widget = forms.HiddenInput())
+
+class DateForm(forms.Form):
+    date = forms.DateField(required = True)

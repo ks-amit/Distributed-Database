@@ -72,6 +72,7 @@
                               <th>Departure</th>
                               <th>Arrival</th>
                               <th>Capacity</th>
+                              <th></th>
                               <th>Status</th>
                             </tr>
                       </thead>
@@ -91,6 +92,7 @@
                                                                         {% if forloop.last %}{{timing}}{% endif %}
                                                                     {% endfor %}{% else %}-{% endif %}</td>
                                 <td>{{ service.seats }}</td>
+                                <td><a>View Bookings</a></td>
                                 <td>{% if service.is_ready == False %}<span style="color: red;">INACTIVE</span>{% else %}<span style="color: green;">RUNNING</span>{% endif %}</td>
                             <tr>
                           {% endfor %}
@@ -125,6 +127,7 @@
                           <th>City</th>
                           <th>Area</th>
                           <th>Rooms</th>
+                          <th></th>
                           <th>Status</th>
                         </tr>
                   </thead>
@@ -136,6 +139,7 @@
                             <td>{% if service.city != '' %}{{ service.city }}{% else %}-{% endif %}</td>
                             <td>{% if service.area != '' %}{{ service.area }}{% else %}-{% endif %}</td>
                             <td>{% if service.rooms != '' %}{{ service.rooms }}{% else %}-{% endif %}</td>
+                            <td><a href="{% url 'hotels:Bookings' id=service.id %}">View Bookings</a></td>
                             <td>{% if service.is_ready == False %}<span style="color: red;">INACTIVE</span>{% else %}<span style="color: green;">RUNNING</span>{% endif %}</td>
                         <tr>
                       {% endfor %}

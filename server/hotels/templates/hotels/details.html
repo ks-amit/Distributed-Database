@@ -68,79 +68,82 @@
                         </form>
                     </div>
 
-                    <div class="container">
-                        <div class="subtitle is-5">Book Rooms:</div>
-                    </div>
-                    <div class="box">
-                        <!-- <div class="subtitle is-6">
-                            <strong>Available Rooms: </strong>
-                        </div> -->
-                        <form method="POST" class="section">
-                            {% csrf_token %}
-                            <!-- HIDDEN INPUT -->
-                            {% render_field form.available %}
-                            <div class="field is-horizontal">
-                                <div class="field-label is-normal">
-                                    <label class="label">Available Rooms:</label>
+                    {% if request.GET.checkin != None and request.GET.checkout != None %}
+
+                        <div class="container">
+                            <div class="subtitle is-5">Book Rooms:</div>
+                        </div>
+                        <div class="box">
+                            <!-- <div class="subtitle is-6">
+                                <strong>Available Rooms: </strong>
+                            </div> -->
+                            <form method="POST" class="section">
+                                {% csrf_token %}
+                                <!-- HIDDEN INPUT -->
+                                {% render_field form.available %}
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Available Rooms:</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                {% if available > 0 %}
+                                                    <div class="tag is-large is-info is-rounded">{{ available }}</div>
+                                                {% else %}
+                                                    <div class="tag is-large" style="color:red;">No Rooms Available</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="field-body">
-                                    <div class="field">
-                                        <div class="control">
-                                            {% if available > 0 %}
-                                                <div class="tag is-large is-info is-rounded">{{ available }}</div>
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Dates (yyyy/mm/dd):</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                {% render_field form.in_date|attr:"readonly:true" type="text" class="input is-rounded" placeholder="Check In Date" %}
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <div class="control">
+                                                {% render_field form.out_date|attr:"readonly:true" type="text" class="input is-rounded" placeholder="Check Out Date" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Rooms:</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                {% render_field form.rooms type="number" class="input is-rounded" placeholder="Rooms" %}
+                                            </div>
+                                            {% if error %}
+                                                <div class="tag is-medium" style="color: red">{{ msg }}</div>
                                             {% else %}
-                                                <div class="tag is-large" style="color:red;">No Rooms Available</div>
+                                                <div class="tag is-medium" style="color: blue">Enter Valid number of Rooms</div>
                                             {% endif %}
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="field is-horizontal">
-                                <div class="field-label is-normal">
-                                    <label class="label">Dates (yyyy/mm/dd):</label>
-                                </div>
-                                <div class="field-body">
-                                    <div class="field">
-                                        <div class="control">
-                                            {% render_field form.in_date|attr:"readonly:true" type="text" class="input is-rounded" placeholder="Check In Date" %}
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <div class="control">
-                                            {% render_field form.out_date|attr:"readonly:true" type="text" class="input is-rounded" placeholder="Check Out Date" %}
+                                        <div class="field">
+                                            <button class="button is-rounded is-primary">
+                                                Pay Now
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="field is-horizontal">
-                                <div class="field-label is-normal">
-                                    <label class="label">Rooms:</label>
-                                </div>
-                                <div class="field-body">
-                                    <div class="field">
-                                        <div class="control">
-                                            {% render_field form.rooms type="number" class="input is-rounded" placeholder="Rooms" %}
-                                        </div>
-                                        {% if error %}
-                                            <div class="tag is-medium" style="color: red">{{ msg }}</div>
-                                        {% else %}
-                                            <div class="tag is-medium" style="color: blue">Enter Valid number of Rooms</div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="field">
-                                        <button class="button is-rounded is-primary">
-                                            Pay Now
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
 
-                    </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="column is-2">
-                <a class="button" href="{% url 'hotels:Search' %}">Modify Search</a>
+                <a class="button" href="{% url 'hotels:Search' %}">Search Hotels</a>
             </div>
         </div>
 

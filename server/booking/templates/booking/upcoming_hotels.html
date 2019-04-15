@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Upcoming Trips{% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+
+        <h3 class="subtitle is-4">UPCOMING TRIPS</h3>
+
+        <div class="tabs">
+            <div class="container">
+              <ul>
+                <li><a href="{% url 'booking:Upcoming' %}?type=hotels">Hotel Bookings</a></li>
+                <li><a href="{% url 'booking:Upcoming' %}?type=buses">Bus Bookings</a></li>
+              </ul>
+            </div>
+            <div class="is-right">
+              <ul>
+                <li><a href="{% url 'booking:Past' %}">Past Trips</a></li>
+              </ul>
+            </div>
+        </div>
+
+            <div class="columns">
+                <div class="column section">
+                    <div class="subtitle is-5">Hotel Bookings</div>
+
+                    {% if hotel_bookings|length == 0 %}
+                    <div class="section notification is-light">
+                        NO BOOKINGS TO SHOW
+                    </div>
+                    {% endif %}
+
+                    {% for hotel in hotel_bookings %}
+                        <form class="box">
+                            <div class="field is-horizontal">
+
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="subtitle is-5">
+                                            <a href="{% url 'hotels:Details' id=hotel.service_id %}">{{ hotel.service_name }}</a>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="subtitle is-5">
+                                            <span class="tag is-medium">{{ hotel.rooms }} rooms</span>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="subtitle is-5">
+                                            <span class="tag is-medium">{{ hotel.in_date }}</span> &nbsp; to &nbsp; <span class="tag is-medium">{{ hotel.out_date }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <a class="button is-rounded" href="{% url 'booking:Detail' id=hotel.id %}">
+                                            Booking Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    {% endfor %}
+                </div>
+            </div>
+    </div>
+
+{% endblock %}

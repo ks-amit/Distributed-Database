@@ -27,5 +27,8 @@ urlpatterns = [
     path('bookings/hotel/new', views.NewHotelBooking.as_view()),
     path('bookings/hotel/get', views.HotelBookingByHotel.as_view()),
     path('bookings/hotel/user/<str:email>', views.GetHotelBookingByUser.as_view()),
+    path('bookings/hotel/id/<slug:id>', views.GetHotelBookingById.as_view()),
+    path('bookings/hotel/delete', views.DeleteHotelBooking.as_view()),
+    path('bookings/hotel/date', views.HotelBookingsByDate.as_view()),
 
 ]

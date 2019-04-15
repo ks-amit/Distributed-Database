@@ -93,3 +93,39 @@ class HotelDetailsView(View):
                 return render(request, self.template_name, {'available': available, 'form': form, 'error': '1', 'msg': 'Enter Valid number of Rooms', 'hotel': hotel, 'type': get_type(request)})
         else:
             return render(request, self.template_name, {'available': available, 'form': form, 'error': '1', 'msg': 'Invalid Submission', 'hotel': hotel, 'type': get_type(request)})
+
+class HotelBookingListView(View):
+
+    template_name = 'hotels/bookings.html'
+
+    def check_provider(self, email, id):
+        service = models.ServiceMetaData.objects.filter(id = id)
+        if not service:
+            return False
+        else:
+            if email in service[0].provider:
+                return True
+            else:
+                return False
+
+    def get_bookings(self, id, date):
+        return utils.get_hotel_booking_by_date(id, date)
+
+    def get(self, request, id):
+        if is_authenticated(request) == None:
+            return redirect('accounts:Login')
+        if self.check_provider(request.session.get('email'), id) == True:
+            bookings = self.get_bookings(id, datetime.date.today())
+            form = forms.DateForm(initial = {'date': datetime.date.today})
+            print(form.data)
+            return render(request, self.template_name, {'form': form, 'bookings': bookings, 'type': get_type(request)})
+        else:
+            print('NOT FOUND')
+
+    def post(self, request, id):
+        form = forms.DateForm(request.POST)
+        if form.is_valid():
+            bookings = self.get_bookings(id, form.cleaned_data.get('date'))
+            return render(request, self.template_name, {'form': form, 'bookings': bookings, 'type': get_type(request)})
+        else:
+            return render(request, self.template_name, {'form': form, 'error': '1', 'msg': 'Invalid Submission', 'bookings': bookings, 'type': get_type(request)})

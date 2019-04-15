@@ -41,21 +41,50 @@
                       <a class="navbar-item" href="{% url 'person:Services' %}" {% block service_block %}{% endblock %}>
                           <p style="margin: 10px; font-size: 18px;">Services</p>
                       </a>
-                      <a class="navbar-item">
-                          <p style="margin: 10px; font-size: 18px;">Account</p>
-                      </a>
-                      <a class="navbar-item" href="{% url 'person:Logout' %}">
-                          <p style="margin: 10px; font-size: 18px;">Logout</p>
-                      </a>
+                      <div class="dropdown navbar-item is-hoverable">
+                          <div class="dropdown-trigger">
+                              <a class="button is-medium is-inverted is-link is-rounded" aria-haspopup="true" aria-controls="dropdown-menu">
+                                  <p style="font-size: 18px;">Account</p>
+                              </a>
+                          </div>
+                          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                              <div class="dropdown-content">
+                                  <a class="dropdown-item" href="{% url 'booking:Upcoming' %}">
+                                      <span class="subtitle is-6">Upcoming Trips</span>
+                                  </a>
+                                  <a class="dropdown-item" href="{% url 'booking:Past' %}">
+                                      <span class="subtitle is-6">Past Trips</span>
+                                  </a>
+                                  <hr class="dropdown-divider">
+                                  <a href="#" class="dropdown-item">
+                                      <span class="subtitle is-6">Account Details</span>
+                                  </a>
+                                  <a href="{% url 'person:Logout' %}" class="dropdown-item">
+                                      <span class="subtitle is-6">Logout</span>
+                                  </a>
+                              </div>
+                          </div>
+                        </div>
                   </div>
               </div>
           </div>
      </nav>
+
      <!-- NAVBAR END -->
      <section class="section">
          <div class="container">
              {% block content_block %}{% endblock %}
          </div>
      </section>
+
+     <script>
+        var dropdown = document.querySelector('.dropdown');
+        dropdown.addEventListener('click', function(event) {
+            event.stopPropagation();
+            dropdown.classList.toggle('is-active');
+
+        });
+     </script>
+
   </body>
 </html>

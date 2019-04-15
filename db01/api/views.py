@@ -323,9 +323,7 @@ class HotelBookingByHotel(APIView):
         return queryset
 
     def post(self, request, format = None):
-        print('REC')
         bookings = self.get_object(service_id = request.data.get('service_id'), in_date = request.data.get('in_date'), out_date = request.data.get('out_date'))
-        print(bookings)
         serializer = HotelBookingSerializer(bookings, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
 
@@ -354,10 +352,33 @@ class NewHotelBooking(APIView):
 class GetHotelBookingByUser(APIView):
 
     def get(self, request, email, format = None):
-        print('HERE')
-        print(email)
         bookings = HotelBooking.objects.filter(email = email)
         serializer = HotelBookingInfoSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+class GetHotelBookingById(APIView):
+
+    def get(self, request, id, format = None):
+        bookings = HotelBooking.objects.filter(id = id)
+        serializer = HotelBookingSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+class DeleteHotelBooking(APIView):
+
+    def post(self, request, format = None):
+        booking = HotelBooking.objects.get(id = request.data.get('id'))
+        booking.delete()
+        return Response(status = status.HTTP_200_OK)
+
+class HotelBookingsByDate(APIView):
+
+    def get_object(self, service_id, date):
+        queryset = HotelBooking.objects.filter(service_id = service_id, in_date__lte = date, out_date__gt = date)
+        return queryset
+
+    def post(self, request):
+        bookings = self.get_object(request.data.get('id'), request.data.get('date'))
+        serializer = HotelBookingSerializer(bookings, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
 
 # class GetHotelByCity(APIView):
