@@ -70,34 +70,71 @@
 
         <!--       CREATE SERVICE        -->
 
+
+    </div>
+
+    <div class="columns">
+
         <div class="column has-text-centered">
+
             <div class="box">
-                <h3 class="subtitle is-5">Create Service</h3>
-                <form class="section" method = "POST">
-                    {% csrf_token %}
-                    <div class="field">
-                        <div class="control">
-                            {% render_field form2.name type="text" class="input" placeholder="Service Name" %}
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <div class="select is-fullwidth">
-                                <select name="service_type" id="id_service_type">
-                                    {% for x, y in form2.fields.service_type.choices %}
-                                        <option value="{{ x }}">{{ y }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <button name="new_service" class="button is-fullwidth is-info is-medium">Confirm</button>
-                </form>
+
+                <h3 class="subtitle is-5">Database Details</h3>
+
+                <div>
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                              <th>Sr. No.</th>
+                              <th>Name</th>
+                              <th>IP Address</th>
+                              <th>Port</th>
+                              <th>Size</th>
+                              <th>Status</th>
+                              <th></th>
+                            </tr>
+                      </thead>
+                      <tbody>
+                          {% for db in dbs %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">
+                                                <input class="input" type="text" name="name" placeholder="DB Name" value="{{ db.name }}" readonly></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">
+                                                <input class="input" type="text" name="ip_addr" placeholder="IP Address" value="{{ db.ip_addr }}"></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="field">
+                                            <div class="control">
+                                                <input class="input" type="text" name="port" placeholder="Port Number" value="{{ db.port }}"></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ db.size }}</td>
+                                    <td>{% if db.status == '0' %}<span style="color: red;">INACTIVE</span>{% elif db.status == '1' %}<span style="color: green;">ACTIVE</span>{% else %}<span style="color: blue;">WAITING</span>{% endif %}</td>
+                                    <td><button name="database_edit" type="submit" class="button is-info">Edit</button></td>
+                                </form>
+                            <tr>
+                          {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+
             </div>
+
         </div>
-        <div class="column has-text-centered">
-            <!-- YET TO BE FILLED -->
-        </div>
+
     </div>
 
 {% endblock %}

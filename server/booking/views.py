@@ -19,7 +19,7 @@ class UpcomingView(View):
                 hotel_bookings = utils.get_hotel_booking_by_user(request.session.get('email'))
                 upcoming_bookings = []
                 for booking in hotel_bookings:
-                    date = datetime.datetime.strptime(booking.get('out_date'), "%Y-%m-%d").date()
+                    date = datetime.datetime.strptime(booking.get('in_date'), "%Y-%m-%d").date()
                     if date < datetime.date.today():
                         continue
                     else:
@@ -42,7 +42,7 @@ class PastView(View):
                 hotel_bookings = utils.get_hotel_booking_by_user(request.session.get('email'))
                 past_bookings = []
                 for booking in hotel_bookings:
-                    date = datetime.datetime.strptime(booking.get('out_date'), "%Y-%m-%d").date()
+                    date = datetime.datetime.strptime(booking.get('in_date'), "%Y-%m-%d").date()
                     if date >= datetime.date.today():
                         continue
                     else:
@@ -69,28 +69,35 @@ class BookingDetailView(View):
                     print('NOT FOUND')
                 else:
                     booking = utils.get_hotel_booking_by_id(id)
+                    in_date = datetime.datetime.strptime(booking.get('in_date'), "%Y-%m-%d").date()
+                    cancel_option = datetime.date.today() < in_date
                     if booking.get('email') != request.session.get('email'):
                         print('NOT FOUND')
                     else:
                         hotel = models.ServiceMetaData.objects.get(id = booking.get('service_id'))
-                        return render(request, self.template_name, {'form': form, 'booking': booking, 'hotel': hotel, 'type': get_type(request)})
+                        return render(request, self.template_name, {'form': form, 'booking': booking, 'hotel': hotel, 'cancel_option': cancel_option, 'type': get_type(request)})
 
     def post(self, request, id):
         userInfo = models.UserMetaData.objects.get(email = request.session.get('email'))
         db_name = userInfo.db_name
         if id[0] == 'H':
             booking = utils.get_hotel_booking_by_id(id)
-            hotel = models.ServiceMetaData.objects.get(id = booking.get('service_id'))
-            form = forms.DeleteBookingForm(request.POST)
-            if form.is_valid():
-                user = utils.get_user(db_name, request.session.get('email'))
-                if check_password(form.cleaned_data.get('password'), user.get('password')) == True:
-                    r = utils.delete_hotel_booking(id)
-                    if r == 200:
-                        return redirect('person:Dashboard')
-                    else:
-                        return render(request, self.template_name, {'form': forms.DeleteBookingForm(), 'error': '1', 'msg': 'Network Error', 'booking': booking, 'hotel': hotel, 'type': get_type(request)})
-                else:
-                    return render(request, self.template_name, {'form': forms.DeleteBookingForm(), 'error': '1', 'msg': 'Incorrect Password', 'booking': booking, 'hotel': hotel, 'type': get_type(request)})
+            in_date = datetime.datetime.strptime(booking.get('in_date'), "%Y-%m-%d").date()
+            cancel_option = datetime.date.today() < in_date
+            if cancel_option == False:
+                return redirect('booking:Detail', id = id)
             else:
-                return render(request, self.template_name, {'form': forms.DeleteBookingForm(), 'error': '1', 'msg': 'Fields cannot be empty', 'booking': booking, 'hotel': hotel, 'type': get_type(request)})
+                hotel = models.ServiceMetaData.objects.get(id = booking.get('service_id'))
+                form = forms.DeleteBookingForm(request.POST)
+                if form.is_valid():
+                    user = utils.get_user(db_name, request.session.get('email'))
+                    if check_password(form.cleaned_data.get('password'), user.get('password')) == True:
+                        r = utils.delete_hotel_booking(id)
+                        if r == 200:
+                            return redirect('person:Dashboard')
+                        else:
+                            return render(request, self.template_name, {'form': forms.DeleteBookingForm(), 'error': '1', 'msg': 'Network Error', 'booking': booking, 'cancel_option': cancel_option, 'hotel': hotel, 'type': get_type(request)})
+                    else:
+                        return render(request, self.template_name, {'form': forms.DeleteBookingForm(), 'error': '1', 'msg': 'Incorrect Password', 'booking': booking, 'cancel_option': cancel_option, 'hotel': hotel, 'type': get_type(request)})
+                else:
+                    return render(request, self.template_name, {'form': forms.DeleteBookingForm(), 'error': '1', 'msg': 'Fields cannot be empty', 'cancel_option': cancel_option, 'booking': booking, 'hotel': hotel, 'type': get_type(request)})

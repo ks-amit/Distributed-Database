@@ -24,6 +24,7 @@ class LoginView(View):
             else:
                 user = user[0]
                 r = utils.get_user(user.db_name, user.email)
+                print(r)
                 pass2 = r.get('password')
                 if check_password(request.POST['password'], pass2) == True:
                     request.session.update({'email': user.email, 'type': r.get('type')})

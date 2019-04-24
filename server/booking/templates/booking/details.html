@@ -120,6 +120,8 @@
                     </div>
                 </div>
 
+                {% if cancel_option == True %}
+
                 <div class="section has-text-centered">
                     <form method="POST">
                         {% csrf_token %}
@@ -153,6 +155,8 @@
                     <!-- MESSAGES END -->
 
                 </div>
+
+                {% endif %}
 
             </div>
             <div class="column is-2">

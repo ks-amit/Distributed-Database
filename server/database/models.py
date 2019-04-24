@@ -6,6 +6,7 @@ class DatabaseDetails(models.Model):
     ip_addr = models.CharField(max_length = 20, null = False)
     port = models.CharField(max_length = 8, null = False)
     size = models.IntegerField(default = 0)
+    status = models.CharField(max_length = 20, default = '', null = True)
 
     def __str__(self):
         return self.name

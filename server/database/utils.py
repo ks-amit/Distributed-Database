@@ -3,6 +3,8 @@ import requests, json
 from django.db.models import F
 from urllib.parse import quote, unquote
 
+STATUS = '/api/status'
+
 INSERT_ADDR = '/api/user/insert'
 GET_ADDR = '/api/user/get'
 UPDATE_ADDR = '/api/user/update'
@@ -26,6 +28,31 @@ GET_HOTEL_BOOKING_BY_USER = '/api/bookings/hotel/user'
 GET_HOTEL_BOOKING_BY_ID = '/api/bookings/hotel/id'
 DELETE_HOTEL_BOOKING = '/api/bookings/hotel/delete'
 GET_HOTEL_BOOKING_BY_DATE = '/api/bookings/hotel/date'
+
+def check_status():
+    D = {'primary': 1}
+    dbs = models.DatabaseDetails.objects.exclude(name = 'primary')
+    for db in dbs:
+        try:
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + STATUS
+            print(db_addr)
+            r = requests.get(db_addr)
+            if r.status_code == 200:
+                D[db.name] = 1
+            else:
+                D[db.name] = 0
+        except Exception as e:
+            D[db.name] = 0
+            continue
+
+    return D
+
+def update_database_status():
+    S = check_status()
+    for key in S:
+        db = models.DatabaseDetails.objects.get(name = key)
+        db.status = S[key]
+        db.save()
 
 def get_database_name():
     queryset = models.DatabaseDetails.objects.exclude(name = 'primary').order_by('size')
@@ -297,7 +324,7 @@ def update_bus_service(id, name = None, price = None, bus_number = None, is_read
     if boarding_point != None:
         DATA.update({'boarding_point': boarding_point.upper()})
     if route != None:
-        DATA.update({'route': route})
+        DATA.update({'route': route.upper()})
     if timing != None:
         DATA.update({'timing': timing})
     if provider_code != None:

@@ -67,10 +67,10 @@ class HotelDetailsView(View):
     def post(self, request, id):
         form = forms.HotelBookForm(request.POST)
         hotel = self.get_hotel_details(id)
-        available = request.POST.get('available')
+        available = int(request.POST.get('available'))
         if form.is_valid():
             rooms = int(form.cleaned_data.get('rooms'))
-            if rooms > 0 and rooms <= int(available):
+            if rooms > 0 and rooms <= available:
                 new_id = 'H' + get_random_string(15)
                 while(utils.check_booking_id(id = new_id) == False):
                     new_id = 'H' + get_random_string(15)
