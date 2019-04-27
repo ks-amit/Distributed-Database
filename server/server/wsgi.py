@@ -18,6 +18,20 @@ def heartbeat():
     print('----------------------------------------------------------------------------------------------------------')
     for key in S:
         db = models.DatabaseDetails.objects.get(name = key)
+        if(S[key] == 1):
+            pending_updates = models.PendingUpdates.objects.filter(db_name = db.name).order_by('timestamp')
+            while pending_updates.count() > 0:
+                for update in pending_updates:
+                    try:
+                        r = utils.perform_update(update)
+                        if r == 200 or r == 201:
+                            update.delete()
+                    except Exception as e:
+                        print(e)
+                        continue
+
+                pending_updates = models.PendingUpdates.objects.filter(db_name = db.name).order_by('timestamp')
+
         db.status = S[key]
         db.save()
     time.sleep(10)

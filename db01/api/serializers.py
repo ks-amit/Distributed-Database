@@ -19,6 +19,11 @@ class HotelSerializer(serializers.ModelSerializer):
         model = HotelService
         fields = ('id', 'name', 'city', 'area', 'check_in', 'check_out', 'price', 'is_ready', 'provider', 'rooms', 'address', 'description', )
 
+class UpdateStatusSerializer(serializers.Serializer):
+
+    db_addr_1 = serializers.BooleanField()
+    db_addr_2 = serializers.BooleanField()
+
 class HotelBookingSerializer(serializers.ModelSerializer):
 
     class Meta:

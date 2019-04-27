@@ -23,8 +23,7 @@ class LoginView(View):
                 return render(request, self.template_name, {'form': forms.LoginForm(), 'error': '1', 'msg': 'User does not exist. SignUp to proceed'})
             else:
                 user = user[0]
-                r = utils.get_user(user.db_name, user.email)
-                print(r)
+                r = utils.get_user_rep(user)
                 pass2 = r.get('password')
                 if check_password(request.POST['password'], pass2) == True:
                     request.session.update({'email': user.email, 'type': r.get('type')})
@@ -32,7 +31,7 @@ class LoginView(View):
                 else:
                     return render(request, self.template_name, {'form': forms.LoginForm(), 'error': '1', 'msg': 'Incorrect Password'})
         except:
-            return render(request, self.template_name, {'form': forms.LoginForm(), 'error': '1', 'msg': 'Incorrect Submission'})
+            return render(request, self.template_name, {'form': forms.LoginForm(), 'error': '1', 'msg': 'Internal Error'})
 
 class SignupView(View):
     template_name = 'accounts/signup.html'
@@ -44,10 +43,9 @@ class SignupView(View):
         try:
             form = forms.SignupForm(request.POST)
             if form.is_valid():
-                db_name = utils.get_database_name()
                 token = make_password(get_random_string(length = 16))
                 password = make_password(form.cleaned_data['password'])
-                r = utils.insert_user(db_name, form.cleaned_data['email'], password, token, 'U')
+                r = utils.insert_user(form.cleaned_data['email'], password, token, 'U')
                 if r == 201:
                     return render(request, self.template_name, {'form': forms.SignupForm(), 'success': '1', 'msg': 'Account created Successfully'})
                 else:

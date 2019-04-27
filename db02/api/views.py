@@ -2,9 +2,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User, BusService, HotelService, HotelBooking
-from .serializers import UserSerializer, BusSerializer, HotelSerializer, HotelBookingSerializer, HotelBookingInfoSerializer
+from .serializers import UserSerializer, BusSerializer, HotelSerializer, HotelBookingSerializer, HotelBookingInfoSerializer, UpdateStatusSerializer
 from rest_framework import status
 import json
+import requests
 
 class UserList(APIView):
 
@@ -68,7 +69,37 @@ class UpdateUser(APIView):
                     user.type = request.data.get('type')
                 user.full_clean()
                 user.save()
-                return Response(status = status.HTTP_200_OK)
+
+                if request.data.get('db_addr_1') != None:
+                    DATA = {}
+                    UP = {'db_addr_1': False, 'db_addr_2': False}
+                    for item in request.data:
+                        DATA[item] = request.data.get(item)
+                    db_addr_1 = DATA['db_addr_1']
+                    db_addr_2 = DATA['db_addr_2']
+                    del DATA['db_addr_1']
+                    del DATA['db_addr_2']
+
+                    try:
+                        r1 = requests.post(db_addr_1, data = DATA)
+                        if r1.status_code == 200:
+                            UP['db_addr_1'] = True
+                    except:
+                        pass
+
+                    try:
+                        r2 = requests.post(db_addr_2, data = DATA)
+                        if r2.status_code == 200:
+                            UP['db_addr_2'] = True
+                    except:
+                        pass
+
+                    serializer = UpdateStatusSerializer(UP)
+                    return Response(serializer.data, status = status.HTTP_200_OK)
+
+                else:
+                    return Response(status = status.HTTP_200_OK)
+
             except:
                 return Response(status = status.HTTP_400_BAD_REQUEST)
 
@@ -157,7 +188,37 @@ class UpdateBusService(APIView):
                     service.boarding_point.remove(service.boarding_point[int(request.data.get('boarding_point'))])
                 service.full_clean()
                 service.save()
-                return Response(status = status.HTTP_200_OK)
+
+                if request.data.get('db_addr_1') != None:
+                    DATA = {}
+                    UP = {'db_addr_1': False, 'db_addr_2': False}
+                    for item in request.data:
+                        DATA[item] = request.data.get(item)
+                    db_addr_1 = DATA['db_addr_1']
+                    db_addr_2 = DATA['db_addr_2']
+                    del DATA['db_addr_1']
+                    del DATA['db_addr_2']
+
+                    try:
+                        r1 = requests.post(db_addr_1, data = DATA)
+                        if r1.status_code == 200:
+                            UP['db_addr_1'] = True
+                    except:
+                        pass
+
+                    try:
+                        r2 = requests.post(db_addr_2, data = DATA)
+                        if r2.status_code == 200:
+                            UP['db_addr_2'] = True
+                    except:
+                        pass
+
+                    serializer = UpdateStatusSerializer(UP)
+                    return Response(serializer.data, status = status.HTTP_200_OK)
+
+                else:
+                    return Response(status = status.HTTP_200_OK)
+
             except Exception as e:
                 print(e)
                 return Response(status = status.HTTP_400_BAD_REQUEST)
@@ -187,7 +248,36 @@ class DeleteBusService(APIView):
         else:
             service = service[0]
             service.delete()
-            return Response(status = status.HTTP_200_OK)
+
+            if request.data.get('db_addr_1') != None:
+                DATA = {}
+                UP = {'db_addr_1': False, 'db_addr_2': False}
+                for item in request.data:
+                    DATA[item] = request.data.get(item)
+                db_addr_1 = DATA['db_addr_1']
+                db_addr_2 = DATA['db_addr_2']
+                del DATA['db_addr_1']
+                del DATA['db_addr_2']
+
+                try:
+                    r1 = requests.post(db_addr_1, data = DATA)
+                    if r1.status_code == 200:
+                        UP['db_addr_1'] = True
+                except Exception as e:
+                    pass
+
+                try:
+                    r2 = requests.post(db_addr_2, data = DATA)
+                    if r2.status_code == 200:
+                        UP['db_addr_2'] = True
+                except Exception as e:
+                    pass
+
+                serializer = UpdateStatusSerializer(UP)
+                return Response(serializer.data, status = status.HTTP_200_OK)
+
+            else:
+                return Response(status = status.HTTP_200_OK)
 
 class HotelServiceList(APIView):
 
@@ -260,7 +350,37 @@ class UpdateHotelService(APIView):
 
                 service.full_clean()
                 service.save()
-                return Response(status = status.HTTP_200_OK)
+
+                if request.data.get('db_addr_1') != None:
+                    DATA = {}
+                    UP = {'db_addr_1': False, 'db_addr_2': False}
+                    for item in request.data:
+                        DATA[item] = request.data.get(item)
+                    db_addr_1 = DATA['db_addr_1']
+                    db_addr_2 = DATA['db_addr_2']
+                    del DATA['db_addr_1']
+                    del DATA['db_addr_2']
+
+                    try:
+                        r1 = requests.post(db_addr_1, data = DATA)
+                        if r1.status_code == 200:
+                            UP['db_addr_1'] = True
+                    except:
+                        pass
+
+                    try:
+                        r2 = requests.post(db_addr_2, data = DATA)
+                        if r2.status_code == 200:
+                            UP['db_addr_2'] = True
+                    except:
+                        pass
+
+                    serializer = UpdateStatusSerializer(UP)
+                    return Response(serializer.data, status = status.HTTP_200_OK)
+
+                else:
+                    return Response(status = status.HTTP_200_OK)
+
             except Exception as e:
                 print(e)
                 return Response(status = status.HTTP_400_BAD_REQUEST)
@@ -307,7 +427,35 @@ class DeleteHotelService(APIView):
         else:
             service = service[0]
             service.delete()
-            return Response(status = status.HTTP_200_OK)
+            if request.data.get('db_addr_1') != None:
+                DATA = {}
+                UP = {'db_addr_1': False, 'db_addr_2': False}
+                for item in request.data:
+                    DATA[item] = request.data.get(item)
+                db_addr_1 = DATA['db_addr_1']
+                db_addr_2 = DATA['db_addr_2']
+                del DATA['db_addr_1']
+                del DATA['db_addr_2']
+
+                try:
+                    r1 = requests.post(db_addr_1, data = DATA)
+                    if r1.status_code == 200:
+                        UP['db_addr_1'] = True
+                except:
+                    pass
+
+                try:
+                    r2 = requests.post(db_addr_2, data = DATA)
+                    if r2.status_code == 200:
+                        UP['db_addr_2'] = True
+                except:
+                    pass
+
+                serializer = UpdateStatusSerializer(UP)
+                return Response(serializer.data, status = status.HTTP_200_OK)
+
+            else:
+                return Response(status = status.HTTP_200_OK)
 
 class HotelBookingList(APIView):
 

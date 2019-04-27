@@ -54,28 +54,24 @@ class ServiceView(View):
     def get(self, request):
         if is_authenticated(request) != None:
             if get_type(request) == 'S':
-                services = utils.get_bus_service_by_email(request.session.get('email'))
-                services1 = utils.get_hotel_service_by_email(request.session.get('email'))
+                bus_services, hotel_services = utils.get_services_by_email_rep(request.session.get('email'))
                 form = forms.NewServiceForm()
-                return render(request, self.template_name, {'form': form, 'services': services, 'services1': services1, 'type': get_type(request)})
+                return render(request, self.template_name, {'form': form, 'services': bus_services, 'services1': hotel_services, 'type': get_type(request)})
             else:
                 return redirect('person:Dashboard')
         else:
             return redirect('accounts:Login')
 
     def post(self, request):
-        services = utils.get_bus_service_by_email(request.session.get('email'))
-        services1 = utils.get_hotel_service_by_email(request.session.get('email'))
+        services, services1 = utils.get_services_by_email_rep(request.session.get('email'))
         if 'new_service' in request.POST and request.POST.get('service_type') == 'B':
             form = forms.NewServiceForm(request.POST)
             if form.is_valid():
-                service_type = form.cleaned_data.get('service_type')
                 id = 'B' + get_random_string(15)
                 while utils.check_service_id(id) == False:
                     id = 'B' + get_random_string(15)
-                db_name = utils.get_database_name()
                 provider = request.session.get('email')
-                r = utils.insert_bus_service(db_name, id, form.cleaned_data.get('name'), provider)
+                r = utils.insert_bus_service_rep(id, form.cleaned_data.get('name'), provider)
                 if r == 201:
                     return redirect('person:EditService', id = id)
                 else:
@@ -85,17 +81,15 @@ class ServiceView(View):
         elif 'new_service' in request.POST and request.POST.get('service_type') == 'H':
             form = forms.NewServiceForm(request.POST)
             if form.is_valid():
-                service_type = form.cleaned_data.get('service_type')
                 id = 'H' + get_random_string(15)
                 while utils.check_service_id(id) == False:
                     id = 'H' + get_random_string(15)
-                db_name = utils.get_database_name()
                 provider = request.session.get('email')
-                r = utils.insert_hotel_service(db_name, id, form.cleaned_data.get('name'), provider)
+                r = utils.insert_hotel_service_rep(id, form.cleaned_data.get('name'), provider)
                 if r == 201:
                     return redirect('person:EditService', id = id)
                 else:
-                    return render(request, self.template_name, {'form': form, 'services': services, 'services1': services1, 'type': get_type(request), 'error': '1', 'msg': 'Network Error'})
+                    return render(request, self.template_name, {'form': form, 'services': services, 'services1': services1, 'type': get_type(request), 'error': '1', 'msg': 'Error: Enough Replicas not created!'})
             else:
                 return render(request, self.template_name, {'form': form, 'services': services, 'services1': services1, 'type': get_type(request), 'error': '1', 'msg': 'Invalid Details'})
 
@@ -110,27 +104,25 @@ class EditServiceView(View):
     def get_user(self, email):
         user = models.UserMetaData.objects.filter(email = email)
         user = user[0]
-        db_name = user.db_name
-        return utils.get_user(db_name, email)
+        return utils.get_user_rep(user)
 
     def get_form(self, id):
-        S = utils.get_bus_service_by_id(id)
+        S = utils.get_bus_service_by_id_rep(id)
         form = forms.EditBusServiceForm(initial = {'id': id, 'service_type': 'Bus', 'name': S.get('name'), 'bus_number': S.get('bus_number'), 'seats': S.get('seats'), 'price': S.get('price'), 'is_ready': S.get('is_ready')})
         return form
 
     def get_form_1(self, id):
-        S = utils.get_hotel_service_by_id(id)
+        S = utils.get_hotel_service_by_id_rep(id)
         form = forms.EditHotelServiceForm(initial = {'id': id, 'service_type': 'Hotel', 'name': S.get('name'), 'description': S.get('description'), 'city': S.get('city'), 'address': S.get('address'), 'area': S.get('area'), 'rooms': S.get('rooms'), 'check_in': S.get('check_in'), 'check_out': S.get('check_out'), 'price': S.get('price'), 'is_ready': S.get('is_ready')})
         return form
 
     def get_service(self, id):
-        S = utils.get_bus_service_by_id(id)
+        S = utils.get_bus_service_by_id_rep(id)
         S.update({'combined_list': zip(S.get('route'), S.get('timing'), S.get('boarding_point'))})
-        print(S)
         return S
 
     def get_service_1(self, id):
-        S = utils.get_hotel_service_by_id(id)
+        S = utils.get_hotel_service_by_id_rep(id)
         return S
 
     def get(self, request, id):
@@ -168,7 +160,7 @@ class EditServiceView(View):
             if 'delete_service' in request.POST:
                 user = self.get_user(request.session.get('email'))
                 if check_password(request.POST.get('password'), user.get('password')):
-                    r = utils.delete_bus_service(id = id)
+                    r = utils.delete_bus_service_rep(id = id)
                     if r == 200:
                         return redirect('person:Services')
                     else:
@@ -180,7 +172,7 @@ class EditServiceView(View):
                 if form1.is_valid():
                     email = form1.cleaned_data.get('email')
                     if email not in service.provider:
-                        r = utils.update_bus_service(id = id, provider = email, provider_code = 'ADD')
+                        r = utils.update_bus_service_rep(id = id, provider = email, provider_code = 'ADD')
                         if r == 200:
                             service.provider.append(email)
                             service.save()
@@ -192,12 +184,12 @@ class EditServiceView(View):
             elif 'edit_service' in request.POST:
                 form = forms.EditBusServiceForm(request.POST)
                 if form.is_valid():
-                    r = utils.update_bus_service(   name = form.cleaned_data.get('name'),
-                                                    price = form.cleaned_data.get('price'),
-                                                    bus_number = form.cleaned_data.get('bus_number'),
-                                                    seats = form.cleaned_data.get('seats'),
-                                                    is_ready = form.cleaned_data.get('is_ready'),
-                                                    id = id)
+                    r = utils.update_bus_service_rep(   name = form.cleaned_data.get('name'),
+                                                        price = form.cleaned_data.get('price'),
+                                                        bus_number = form.cleaned_data.get('bus_number'),
+                                                        seats = form.cleaned_data.get('seats'),
+                                                        is_ready = form.cleaned_data.get('is_ready'),
+                                                        id = id)
                     if r == 200:
                         service.name = form.cleaned_data.get('name')
                         service.capacity = int(form.cleaned_data.get('seats'))
@@ -211,7 +203,7 @@ class EditServiceView(View):
                 form3 = forms.EditRouteForm(request.POST)
                 if form3.is_valid():
                     time = str(form3.cleaned_data.get('day')) + ':' + str(form3.cleaned_data.get('time_hour')) + ':' + str(form3.cleaned_data.get('time_mins'))
-                    r = utils.update_bus_service(id = id, boarding_point = form3.cleaned_data.get('boarding_point'), route = form3.cleaned_data.get('stop_name'), route_code = 'ADD', timing = time, timing_code = 'ADD', boarding_code = 'ADD')
+                    r = utils.update_bus_service_rep(id = id, boarding_point = form3.cleaned_data.get('boarding_point'), route = form3.cleaned_data.get('stop_name'), route_code = 'ADD', timing = time, timing_code = 'ADD', boarding_code = 'ADD')
                     if r == 200:
                         return render(request, self.template_name, {'form': self.get_form(id), 'success3': '1', 'msg3': 'Bus Route Updated', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'form3': forms.EditRouteForm(), 'service': self.get_service(id), 'type': get_type(request)})
                     else:
@@ -225,7 +217,8 @@ class EditServiceView(View):
                 if form1.is_valid():
                     email = form1.cleaned_data.get('email')
                     if email not in service.provider:
-                        r = utils.update_hotel_service(id = id, provider = email, provider_code = 'ADD')
+                        utils.check_primary(service)
+                        r = utils.update_hotel_service_rep(id = id, provider = email, provider_code = 'ADD')
                         if r == 200:
                             service.provider.append(email)
                             service.save()
@@ -240,37 +233,38 @@ class EditServiceView(View):
             elif 'delete_service' in request.POST:
                 user = self.get_user(request.session.get('email'))
                 if check_password(request.POST.get('password'), user.get('password')):
-                    r = utils.delete_hotel_service(id = id)
+                    r = utils.delete_hotel_service_rep(id = id)
                     if r == 200:
                         return redirect('person:Services')
                     else:
-                        return render(request, self.template_name_1, {'form': self.get_form_1(id), 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'error2': '1', 'msg2': 'Network Error', 'service': self.get_service_1(id), 'type': get_type(request)})
+                        return render(request, self.template_name_1, {'form': self.get_form_1(id), 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'error2': '1', 'msg2': 'Internal Error', 'service': self.get_service_1(id), 'type': get_type(request)})
                 else:
                     return render(request, self.template_name_1, {'form': self.get_form_1(id), 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'error2': '1', 'msg2': 'Incorrect Password', 'service': self.get_service_1(id), 'type': get_type(request)})
 
             elif 'edit_service' in request.POST:
                 form = forms.EditHotelServiceForm(request.POST)
                 if form.is_valid():
-                    r = utils.update_hotel_service( name = form.cleaned_data.get('name'),
-                                                    price = form.cleaned_data.get('price'),
-                                                    city = form.cleaned_data.get('city'),
-                                                    area = form.cleaned_data.get('area'),
-                                                    rooms = form.cleaned_data.get('rooms'),
-                                                    address = form.cleaned_data.get('address'),
-                                                    is_ready = form.cleaned_data.get('is_ready'),
-                                                    id = id,
-                                                    description = form.cleaned_data.get('description'),
-                                                    check_in = form.cleaned_data.get('check_in'),
-                                                    check_out = form.cleaned_data.get('check_out'))
+                    utils.check_primary(service)
+                    r = utils.update_hotel_service_rep( name = form.cleaned_data.get('name'),
+                                                        price = form.cleaned_data.get('price'),
+                                                        city = form.cleaned_data.get('city'),
+                                                        area = form.cleaned_data.get('area'),
+                                                        rooms = form.cleaned_data.get('rooms'),
+                                                        address = form.cleaned_data.get('address'),
+                                                        is_ready = form.cleaned_data.get('is_ready'),
+                                                        id = id,
+                                                        description = form.cleaned_data.get('description'),
+                                                        check_in = form.cleaned_data.get('check_in'),
+                                                        check_out = form.cleaned_data.get('check_out'))
+
                     if r == 200:
                         service.name = form.cleaned_data.get('name')
                         service.capacity = int(form.cleaned_data.get('rooms'))
                         service.save()
                         return render(request, self.template_name_1, {'form': self.get_form_1(id), 'success': '1', 'msg': 'INFORMATION UPDATED', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
                     else:
-                        return render(request, self.template_name_1, {'form': self.get_form_1(id), 'error': '1', 'msg': 'NETWORK ERROR', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
+                        return render(request, self.template_name_1, {'form': self.get_form_1(id), 'error': '1', 'msg': 'INTERNAL ERROR', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
                 else:
-                    print(form.errors)
                     return render(request, self.template_name_1, {'form': self.get_form_1(id), 'error': '1', 'msg': 'INVALID DETAILS', 'form1': forms.ManagersForm(), 'form2': forms.PasswordForm(), 'service': self.get_service_1(id), 'type': get_type(request)})
 
 class DeleteManagerView(View):
@@ -289,12 +283,12 @@ class DeleteManagerView(View):
             else:
                 E = service.provider[int(email)]
                 if service.type == 'B':
-                    r = utils.update_bus_service(id = id, provider = E, provider_code = 'REMOVE')
+                    r = utils.update_bus_service_rep(id = id, provider = E, provider_code = 'REMOVE')
                     if r == 200:
                         service.provider.remove(E)
                         service.save()
                 elif service.type == 'H':
-                    r = utils.update_hotel_service(id = id, provider = E, provider_code = 'REMOVE')
+                    r = utils.update_hotel_service_rep(id = id, provider = E, provider_code = 'REMOVE')
                     if r == 200:
                         service.provider.remove(E)
                         service.save()
@@ -310,7 +304,7 @@ class DeleteRouteView(View):
         if not service:
             print('NOT FOUND')
         else:
-            r = utils.update_bus_service(id = id, route = index, timing = index, boarding_point = index, route_code = 'REMOVE', timing_code = 'REMOVE', boarding_code = 'REMOVE')
+            r = utils.update_bus_service_rep(id = id, route = index, timing = index, boarding_point = index, route_code = 'REMOVE', timing_code = 'REMOVE', boarding_code = 'REMOVE')
             if r == 200:
                 return redirect('person:EditService', id = id)
             else:

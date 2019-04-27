@@ -18,7 +18,8 @@ class UserPrivilageForm(forms.Form):
         user = self.get_object(email)
         if user.count() > 0:
             user = user[0]
-            r = utils.update_user(user.db_name, user.email, type = privilage)
+            utils.check_primary(user)
+            r = utils.update_user_rep(user, type = privilage)
             if r == 200:
                 return privilage
             else:
@@ -40,7 +41,7 @@ class ManagersForm(forms.Form):
         user = self.get_object(email)
         if user.count() > 0:
             user = user[0]
-            user = utils.get_user(user.db_name, user.email)
+            user = utils.get_user_rep(user)
             if user.get('type') == 'S':
                 return email
             else:
