@@ -49,6 +49,9 @@ class BookingMetaData(models.Model):
     id = models.CharField(primary_key = True, max_length = 64, null = False)
     type = models.CharField(max_length = 1, choices = CHOICES, null = False)
     db_name = models.CharField(max_length = 50, null = False)
+    db_name_0 = models.CharField(max_length = 20, default = '')
+    db_name_1 = models.CharField(max_length = 20, default = '')
+    db_name_2 = models.CharField(max_length = 20, default = '')
     start_date = models.DateField()
 
     def __str__(self):

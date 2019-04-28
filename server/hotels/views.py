@@ -53,7 +53,7 @@ class HotelDetailsView(View):
     template_name = 'hotels/details.html'
 
     def get_hotel_details(self, id):
-        return utils.get_hotel_service_by_id(id)
+        return utils.get_hotel_service_by_id_rep(id)
 
     def get(self, request, id):
         if is_authenticated(request) == None:
@@ -76,17 +76,18 @@ class HotelDetailsView(View):
                     new_id = 'H' + get_random_string(15)
                 db_name = utils.get_database_name()
                 bill = int(hotel.get('price')) * int(form.cleaned_data.get('rooms'))
-                r = utils.new_hotel_booking(db_name = db_name,
-                                            id = new_id,
-                                            service_id = id,
-                                            email = request.session.get('email'),
-                                            in_date = form.cleaned_data.get('in_date'),
-                                            out_date = form.cleaned_data.get('out_date'),
-                                            booking_date = datetime.date.today(),
-                                            rooms = form.cleaned_data.get('rooms'),
-                                            bill = bill)
+
+                r = utils.new_hotel_booking_rep(id = new_id,
+                                                service_id = id,
+                                                email = request.session.get('email'),
+                                                in_date = form.cleaned_data.get('in_date'),
+                                                out_date = form.cleaned_data.get('out_date'),
+                                                booking_date = datetime.date.today(),
+                                                rooms = form.cleaned_data.get('rooms'),
+                                                bill = bill)
+
                 if r == 201:
-                    print('BOOKING CONFIRMED')
+                    return redirect('booking:Detail', id = new_id)
                 else:
                     return render(request, self.template_name, {'available': available, 'form': form, 'error': '1', 'msg': 'Internal Error. Try Again.', 'hotel': hotel, 'type': get_type(request)})
             else:
@@ -109,7 +110,7 @@ class HotelBookingListView(View):
                 return False
 
     def get_bookings(self, id, date):
-        return utils.get_hotel_booking_by_date(id, date)
+        return utils.get_hotel_booking_by_date_rep(id, date)
 
     def get(self, request, id):
         if is_authenticated(request) == None:
@@ -117,7 +118,6 @@ class HotelBookingListView(View):
         if self.check_provider(request.session.get('email'), id) == True:
             bookings = self.get_bookings(id, datetime.date.today())
             form = forms.DateForm(initial = {'date': datetime.date.today})
-            print(form.data)
             return render(request, self.template_name, {'form': form, 'bookings': bookings, 'type': get_type(request)})
         else:
             print('NOT FOUND')

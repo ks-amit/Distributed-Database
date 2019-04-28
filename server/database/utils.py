@@ -195,15 +195,33 @@ def check_service_id(id):
     else:
         return True
 
-def get_hotel_booking_by_date(id, date):
-    metaData = models.ServiceMetaData.objects.filter(id = id)
-    metaData = metaData[0]
-    db_name = metaData.db_name
-    queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
-    db_addr = 'http://' + queryset.ip_addr + ':' + queryset.port + GET_HOTEL_BOOKING_BY_DATE
-    DATA = {'id': id, 'date': date}
-    r = requests.post(db_addr, data = DATA)
-    return json.loads(r.text)
+########################## REP VERSION #######################
+
+def get_hotel_booking_by_date_rep(id, date):
+
+        dbs = models.DatabaseDetails.objects.exclude(name = 'primary')
+        DATA = {'id': id, 'date': date}
+        D = {}
+        bookings = []
+        for db in dbs:
+
+            try:
+
+                db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_HOTEL_BOOKING_BY_DATE
+                r = requests.post(db_addr, data = DATA)
+                B = json.loads(r.text)
+                for booking in B:
+                    b_id = booking.get('id')
+                    if b_id not in D:
+                        D[b_id] = 1
+                        bookings.append(booking)
+
+            except Exception as e:
+                continue
+
+        return bookings
+
+##############################################################
 
 def delete_hotel_booking(id):
     metaData = models.BookingMetaData.objects.filter(id = id)
@@ -245,6 +263,43 @@ def get_hotel_booking_by_user(email):
             continue
 
     return A
+
+####################### REP VERSION ##########################
+
+def new_hotel_booking_rep(id, service_id, email, in_date, out_date, booking_date, rooms, bill):
+
+    dbs = models.DatabaseDetails.objects.exclude(name = 'primary').filter(status = '1').order_by('size')
+    counter = 0
+    DATA = {'id': id, 'service_id': service_id, 'email': email, 'in_date': in_date, 'out_date': out_date, 'booking_date': booking_date, 'rooms': rooms, 'bill': bill}
+    db_names = []
+    for db in dbs:
+
+        try:
+
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + HOTEL_BOOKING
+            r = requests.post(db_addr, data = DATA)
+            if r.status_code == 201:
+                db_names.append(db.name)
+                counter += 1
+                db.size += 4
+                db.save()
+
+                if counter == 3:
+                    break
+
+        except:
+            continue
+
+    if counter == 3:
+        new_booking = models.BookingMetaData(id = id, type = 'H', db_name_0 = db_names[0], db_name_1 = db_names[1], db_name_2 = db_names[2], start_date = in_date)
+        new_booking.db_name = db_names[0]       # remove later
+        new_booking.save()
+        return 201
+
+    return 201
+
+
+##############################################################
 
 def new_hotel_booking(db_name, id, service_id, email, in_date, out_date, booking_date, rooms, bill):
     queryset = models.DatabaseDetails.objects.filter(name = db_name)[0]
