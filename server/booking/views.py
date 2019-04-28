@@ -68,20 +68,23 @@ class BookingDetailView(View):
                 if not booking_details:
                     print('NOT FOUND')
                 else:
-                    booking = utils.get_hotel_booking_by_id(id)
-                    in_date = datetime.datetime.strptime(booking.get('in_date'), "%Y-%m-%d").date()
-                    cancel_option = datetime.date.today() < in_date
-                    if booking.get('email') != request.session.get('email'):
-                        print('NOT FOUND')
-                    else:
-                        hotel = models.ServiceMetaData.objects.get(id = booking.get('service_id'))
-                        return render(request, self.template_name, {'form': form, 'booking': booking, 'hotel': hotel, 'cancel_option': cancel_option, 'type': get_type(request)})
+                    try:
+                        booking = utils.get_hotel_booking_by_id_rep(id)
+                        in_date = datetime.datetime.strptime(booking.get('in_date'), "%Y-%m-%d").date()
+                        cancel_option = datetime.date.today() < in_date
+                        if booking.get('email') != request.session.get('email'):
+                            print('NOT FOUND')
+                        else:
+                            hotel = models.ServiceMetaData.objects.get(id = booking.get('service_id'))
+                            return render(request, self.template_name, {'form': form, 'booking': booking, 'hotel': hotel, 'cancel_option': cancel_option, 'type': get_type(request)})
+                    except:
+                        print('INTERNAL ERROR')
 
     def post(self, request, id):
         userInfo = models.UserMetaData.objects.get(email = request.session.get('email'))
         db_name = userInfo.db_name
         if id[0] == 'H':
-            booking = utils.get_hotel_booking_by_id(id)
+            booking = utils.get_hotel_booking_by_id_rep(id)
             in_date = datetime.datetime.strptime(booking.get('in_date'), "%Y-%m-%d").date()
             cancel_option = datetime.date.today() < in_date
             if cancel_option == False:
@@ -90,9 +93,9 @@ class BookingDetailView(View):
                 hotel = models.ServiceMetaData.objects.get(id = booking.get('service_id'))
                 form = forms.DeleteBookingForm(request.POST)
                 if form.is_valid():
-                    user = utils.get_user(db_name, request.session.get('email'))
+                    user = utils.get_user_rep(userInfo)
                     if check_password(form.cleaned_data.get('password'), user.get('password')) == True:
-                        r = utils.delete_hotel_booking(id)
+                        r = utils.delete_hotel_booking_rep(id)
                         if r == 200:
                             return redirect('person:Dashboard')
                         else:

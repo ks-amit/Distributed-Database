@@ -516,7 +516,36 @@ class DeleteHotelBooking(APIView):
     def post(self, request, format = None):
         booking = HotelBooking.objects.get(id = request.data.get('id'))
         booking.delete()
-        return Response(status = status.HTTP_200_OK)
+
+        if request.data.get('db_addr_1') != None:
+            DATA = {}
+            UP = {'db_addr_1': False, 'db_addr_2': False}
+            for item in request.data:
+                DATA[item] = request.data.get(item)
+            db_addr_1 = DATA['db_addr_1']
+            db_addr_2 = DATA['db_addr_2']
+            del DATA['db_addr_1']
+            del DATA['db_addr_2']
+
+            try:
+                r1 = requests.post(db_addr_1, data = DATA)
+                if r1.status_code == 200:
+                    UP['db_addr_1'] = True
+            except:
+                pass
+
+            try:
+                r2 = requests.post(db_addr_2, data = DATA)
+                if r2.status_code == 200:
+                    UP['db_addr_2'] = True
+            except:
+                pass
+
+            serializer = UpdateStatusSerializer(UP)
+            return Response(serializer.data, status = status.HTTP_200_OK)
+
+        else:
+            return Response(status = status.HTTP_200_OK)
 
 class HotelBookingsByDate(APIView):
 

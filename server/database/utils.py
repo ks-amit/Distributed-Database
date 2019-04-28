@@ -221,6 +221,66 @@ def get_hotel_booking_by_date_rep(id, date):
 
         return bookings
 
+def get_hotel_booking_by_id_rep(id):
+
+    metaData = models.BookingMetaData.objects.get(id = id)
+    check_primary(metaData)
+    for i in range(3):
+
+        try:
+
+            db_name = 'db_name_' + str(i)
+            db = models.DatabaseDetails.objects.get(name = getattr(metaData, db_name))
+            db_addr = 'http://' + db.ip_addr + ':' + db.port + GET_HOTEL_BOOKING_BY_ID + '/' + quote(id)
+            r = requests.get(db_addr)
+            return json.loads(r.text)[0]
+
+        except:
+            continue
+
+def delete_hotel_booking_rep(id):
+
+    try:
+
+        metaData = models.BookingMetaData.objects.get(id = id)
+        check_primary(metaData)
+
+        primary = models.DatabaseDetails.objects.get(name = metaData.db_name_0)
+        sec1 = models.DatabaseDetails.objects.get(name = metaData.db_name_1)
+        sec2 = models.DatabaseDetails.objects.get(name = metaData.db_name_2)
+
+        db_addr_0 = 'http://' + primary.ip_addr + ':' + primary.port + DELETE_HOTEL_BOOKING
+        db_addr_1 = 'http://' + sec1.ip_addr + ':' + sec1.port + DELETE_HOTEL_BOOKING
+        db_addr_2 = 'http://' + sec2.ip_addr + ':' + sec2.port + DELETE_HOTEL_BOOKING
+
+        db_names = {'db_addr_1': sec1.name, 'db_addr_2': sec2.name}
+
+        DATA = {'id': id}
+        DATA.update({'db_addr_1': db_addr_1, 'db_addr_2': db_addr_2})
+
+        r = requests.post(db_addr_0, data = DATA)
+
+        print(r.text)
+
+        if r.status_code == 200:
+
+            primary.size -= 4
+            sec1.size -= 4
+            sec2.size -= 4
+            primary.save()
+            sec1.save()
+            sec2.save()
+            metaData.delete()
+            UP = json.loads(r.text)
+            print(UP)
+            handle_update_status(DATA, UP, 'POST', db_names)
+
+        return r.status_code
+
+    except Exception as e:
+        print(e)
+        return 400
+
 ##############################################################
 
 def delete_hotel_booking(id):
