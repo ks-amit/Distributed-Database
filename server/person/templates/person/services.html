@@ -92,7 +92,7 @@
                                                                         {% if forloop.last %}{{timing}}{% endif %}
                                                                     {% endfor %}{% else %}-{% endif %}</td>
                                 <td>{{ service.seats }}</td>
-                                <td><a>View Bookings</a></td>
+                                <td><a href="{% url 'buses:Bookings' id=service.id %}">View Bookings</a></td>
                                 <td>{% if service.is_ready == False %}<span style="color: red;">INACTIVE</span>{% else %}<span style="color: green;">RUNNING</span>{% endif %}</td>
                             <tr>
                           {% endfor %}

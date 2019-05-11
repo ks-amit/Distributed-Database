@@ -12,6 +12,9 @@ class DatabaseDetails(models.Model):
     def __str__(self):
         return self.name
 
+class HeartBeatRate(models.Model):
+    rate = models.IntegerField()
+
 class UserMetaData(models.Model):
     email = models.EmailField(max_length = 100, primary_key = True)
     db_name = models.CharField(max_length = 50)

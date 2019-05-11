@@ -60,9 +60,12 @@ class HotelDetailsView(View):
             return redirect('accounts:Login')
         else:
             details = self.get_hotel_details(id)
-            available = details.get('rooms') - utils.get_hotel_bookings_by_hotel(service_id = id, in_date = request.GET.get('checkin'), out_date = request.GET.get('checkout'))
-            form = forms.HotelBookForm(initial = {'available': available, 'in_date': request.GET.get('checkin'), 'out_date': request.GET.get('checkout')})
-            return render(request, self.template_name, {'form': form, 'hotel': details, 'available': available, 'type': get_type(request)})
+            if 'checkin' in request.GET and 'checkout' in request.GET:
+                available = details.get('rooms') - utils.get_hotel_bookings_by_hotel(service_id = id, in_date = request.GET.get('checkin'), out_date = request.GET.get('checkout'))
+                form = forms.HotelBookForm(initial = {'available': available, 'in_date': request.GET.get('checkin'), 'out_date': request.GET.get('checkout')})
+                return render(request, self.template_name, {'form': form, 'hotel': details, 'available': available, 'type': get_type(request)})
+            else:
+                return render(request, self.template_name, {'hotel': details, 'type': get_type(request)})
 
     def post(self, request, id):
         form = forms.HotelBookForm(request.POST)
@@ -74,8 +77,11 @@ class HotelDetailsView(View):
                 new_id = 'H' + get_random_string(15)
                 while(utils.check_booking_id(id = new_id) == False):
                     new_id = 'H' + get_random_string(15)
-                db_name = utils.get_database_name()
-                bill = int(hotel.get('price')) * int(form.cleaned_data.get('rooms'))
+
+                in_date = datetime.datetime.strptime(request.GET.get('checkin'), "%Y-%m-%d").date()
+                out_date = datetime.datetime.strptime(request.GET.get('checkout'), "%Y-%m-%d").date()
+                days = (out_date - in_date).days
+                bill = int(hotel.get('price')) * int(form.cleaned_data.get('rooms')) * days
 
                 r = utils.new_hotel_booking_rep(id = new_id,
                                                 service_id = id,

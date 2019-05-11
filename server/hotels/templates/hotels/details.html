@@ -68,7 +68,7 @@
                         </form>
                     </div>
 
-                    {% if request.GET.checkin != None and request.GET.checkout != None %}
+                    {% if form %}
 
                         <div class="container">
                             <div class="subtitle is-5">Book Rooms:</div>
@@ -93,6 +93,18 @@
                                                 {% else %}
                                                     <div class="tag is-large" style="color:red;">No Rooms Available</div>
                                                 {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Price:</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                <div class="tag is-medium is-rounded">{{ hotel.price }}</div> per room
                                             </div>
                                         </div>
                                     </div>

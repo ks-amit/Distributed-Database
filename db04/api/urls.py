@@ -32,4 +32,12 @@ urlpatterns = [
     path('bookings/hotel/date', views.HotelBookingsByDate.as_view()),
     path('status', views.StatusView.as_view()),
 
+    path('bus/list/city', views.GetBusByCity.as_view()),
+    path('bookings/bus/get', views.BusBookingByBus.as_view()),
+    path('bookings/bus/new', views.NewBusBooking.as_view()),
+    path('bookings/bus/id/<slug:id>', views.GetBusBookingById.as_view()),
+    path('bookings/bus/delete', views.DeleteBusBooking.as_view()),
+    path('bookings/bus/user/<str:email>', views.GetBusBookingByUser.as_view()),
+    path('bookings/bus/date', views.BusBookingsByDate.as_view()),
+
 ]

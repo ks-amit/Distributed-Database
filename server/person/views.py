@@ -24,25 +24,33 @@ class AdminView(View):
     def get(self, request):
         if is_authenticated(request) != None and get_type(request) == 'A':
             form1 = forms.UserPrivilageForm()
+            hb_rate = models.HeartBeatRate.objects.all()[0].rate
+            form2 = forms.HeartBeatForm(initial = {'rate': hb_rate})
             dbs = models.DatabaseDetails.objects.order_by('name')
-            return render(request, self.template_name, {'form1': form1, 'dbs': dbs, 'type': get_type(request)})
+            return render(request, self.template_name, {'form1': form1, 'form2': form2, 'dbs': dbs, 'type': get_type(request)})
         else:
             return redirect('accounts:Login')
 
     def post(self, request):
         form1 = forms.UserPrivilageForm()
+        dbs = models.DatabaseDetails.objects.order_by('name')
         if 'user_privilage' in request.POST:
             form1 = forms.UserPrivilageForm(request.POST)
             if form1.is_valid():
-                return render(request, self.template_name, {'form1': forms.UserPrivilageForm(), 'type': get_type(request), 'success1': '1', 'msg1': 'Request Processed'})
+                return render(request, self.template_name, {'form1': forms.UserPrivilageForm(), 'dbs': dbs, 'type': get_type(request), 'success1': '1', 'msg1': 'Request Processed'})
             else:
-                return render(request, self.template_name, {'form1': form1, 'type': get_type(request), 'error1': '1'})
+                return render(request, self.template_name, {'form1': form1, 'dbs': dbs, 'type': get_type(request), 'error1': '1'})
         elif 'database_edit' in request.POST:
             db = models.DatabaseDetails.objects.filter(name = request.POST.get('name'))[0]
             db.ip_addr = request.POST.get('ip_addr')
             db.port = request.POST.get('port')
             db.save()
             utils.update_database_status()
+            return redirect('person:Admin')
+        elif 'heart_beat' in request.POST:
+            metaData = models.HeartBeatRate.objects.all()[0]
+            metaData.rate = int(request.POST.get('rate'))
+            metaData.save()
             return redirect('person:Admin')
 
 class ServiceView(View):

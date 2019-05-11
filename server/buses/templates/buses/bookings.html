@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Bus Bookings{% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+
+        <h3 class="subtitle is-4">BUS BOOKINGS</h3>
+
+        <div class="section">
+            <div class="columns box">
+                <div class="column is-8 is-offset-2">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Search Buses</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div>
+                                        {% render_field form.date type="date" class="input is-rounded" placeholder="Date" %}
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <button class="button is-primary is-rounded is-fullwidth">
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- MESSAGES -->
+                    <div>
+                        {% if error %}
+                        <div class="content">
+                            <span style="color: red;">{{ msg }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!-- MESSAGES END -->
+
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <label class="subtitle is-5">Showing Bookings For (yyyy-mm-dd) : &nbsp; <div class="tag is-medium">
+                {% if request.POST.date %} {{request.POST.date}}
+                {% else %} Today
+                {% endif %}
+            </div></label>
+        </div>
+        <div class="section">
+            <div class="columns box has-text-centered">
+                <div class="column">
+
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                              <th>Booking ID</th>
+                              <th>Email ID</th>
+                              <th>Source</th>
+                              <th>Destination</th>
+                              <th>Seats</th>
+                              <th>Amount</th>
+                              <th>Status</th>
+                            </tr>
+                      </thead>
+                      <tbody>
+                          {% for booking in bookings %}
+                            <tr>
+                                <td>{{ booking.id }}</td>
+                                <td><a href="#">{{ booking.email }}</a></td>
+                                <td>{{ booking.From }}</td>
+                                <td>{{ booking.To }}</td>
+                                <td>{{ booking.seats }}</td>
+                                <td>{{ booking.bill }}</td>
+                                <td><span style="color: green;">Paid</span></td>
+                            <tr>
+                          {% endfor %}
+                      </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

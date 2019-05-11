@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'person',
     'hotels',
     'booking',
+    'buses',
 ]
 
 MIDDLEWARE = [

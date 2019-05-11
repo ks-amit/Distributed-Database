@@ -89,3 +89,6 @@ class EditHotelServiceForm(forms.Form):
     is_ready = forms.BooleanField(required = False)
     check_in = forms.TimeField(required = True)
     check_out = forms.TimeField(required = True)
+
+class HeartBeatForm(forms.Form):
+    rate = forms.IntegerField()

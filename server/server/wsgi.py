@@ -34,7 +34,8 @@ def heartbeat():
 
         db.status = S[key]
         db.save()
-    time.sleep(10)
+    wait_time = int(models.HeartBeatRate.objects.all()[0].rate)
+    time.sleep(wait_time)
     heartbeat()
 
 heartbeat_thread = threading.Thread(target = heartbeat)

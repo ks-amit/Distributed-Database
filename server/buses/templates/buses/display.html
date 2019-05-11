@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Search Buses{% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+
+        <div class="subtitle is-3">
+            SEARCH RESULTS
+            {% if buses|length > 0 %}
+                ({{ buses|length }})
+            {% endif %}
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <div>
+                    {% if buses|length > 0 %}
+                        {% for bus in buses %}
+                            <form class="box">
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">{{ forloop.counter }}.</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="subtitle is-5">
+                                                <strong>{{ bus.name }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <div class="subtitle is-6">
+                                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<b>INR {{ bus.price }}</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label"></label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="subtitle is-6">
+                                                <div class="tag is-medium">{{ bus.source }}</div> &nbsp; to &nbsp; <div class="tag is-medium">{{ bus.destination }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <div class="subtitle is-6">
+                                                <b>{{ bus.travel_time }} </b> &nbsp; hrs
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label"></label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <a class="button" href="{% url 'buses:Details' id=bus.id %}?From={{ request.GET.From|urlencode }}&To={{ request.GET.To|urlencode }}&TravelDate={{ request.GET.TravelDate|urlencode }}">
+
+                                                <div class="subtitle is-6">Book Bus</div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        {% endfor %}
+                    {% else %}
+                        <div class="section">
+                            <div class="columns">
+                                <div class="column is-8 is-offset-2">
+                                    <div class="message box">
+                                        <div class="subtitle" style="color: blue;">No Buses Found</div>
+                                        <a class="button is-medium is-primary" href="{% url 'buses:Search' %}">Search Again</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

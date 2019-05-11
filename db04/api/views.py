@@ -1,11 +1,17 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import User, BusService, HotelService, HotelBooking
-from .serializers import UserSerializer, BusSerializer, HotelSerializer, HotelBookingSerializer, HotelBookingInfoSerializer, UpdateStatusSerializer
+from .models import User, BusService, HotelService, HotelBooking, BusBooking
+from .serializers import UserSerializer, BusSerializer, HotelSerializer, HotelBookingSerializer, HotelBookingInfoSerializer, UpdateStatusSerializer, BusBookingSerializer
 from rest_framework import status
-import json
 import requests
+import json
+
+class UpdateStatus(object):
+
+    def __init__(self, db_name_1, db_name_2):
+        self.db_name_1 = db_name_1
+        self.db_name_2 = db_name_2
 
 class UserList(APIView):
 
@@ -146,6 +152,8 @@ class UpdateBusService(APIView):
 
     def post(self, request, format = None):
         service = self.get_object(request.data.get('id'))
+        print('HERE')
+        print(service.count())
         if not service:
             return Response(status = status.HTTP_400_BAD_REQUEST)
         else:
@@ -279,6 +287,7 @@ class DeleteBusService(APIView):
             else:
                 return Response(status = status.HTTP_200_OK)
 
+
 class HotelServiceList(APIView):
 
     def get(self, request, format = None):
@@ -409,9 +418,9 @@ class GetHotelByCity(APIView):
 
     def post(self, request, format = None):
         if request.data.get('area') == None or request.data.get('area') == '':
-            services = HotelService.objects.filter(city = request.data.get('city'))
+            services = HotelService.objects.filter(city = request.data.get('city'), is_ready = True)
         else:
-            services = HotelService.objects.filter(city = request.data.get('city'), area = request.data.get('area'))
+            services = HotelService.objects.filter(city = request.data.get('city'), area = request.data.get('area'), is_ready = True)
         serializer = HotelSerializer(services, many = True)
         return Response(serializer.data)
 
@@ -575,3 +584,117 @@ class StatusView(APIView):
 #         queryset = self.get_object(request.data.get('city'), request.data.get('area'))
 #         serializer = HotelBookingSerializer(queryset, many = True)
 #         return Response(serializer.data, status = status.HTTP_200_OK)
+
+class GetBusByCity(APIView):
+
+    def post(self, request, format = None):
+        services = BusService.objects.filter(route__contains = [request.data.get('From'), request.data.get('To')], is_ready=True)
+        S = []
+        for service in services:
+            idx1 = service.route.index(request.data.get('From'))
+            idx2 = idx1
+            for i in range(idx1 + 1, len(service.route)):
+                if service.route[i] == request.data.get('To'):
+                    idx2 = i
+                    break
+            if idx2 > idx1:
+                S.append(service)
+        serializer = BusSerializer(S, many = True)
+        return Response(serializer.data)
+
+class BusBookingByBus(APIView):
+
+    def get_object(self, service_id, TravelDate):
+        queryset = BusBooking.objects.filter(service_id = service_id, TravelDate = TravelDate)
+        return queryset
+
+    def post(self, request, format = None):
+        bookings = self.get_object(service_id = request.data.get('service_id'), TravelDate = request.data.get('TravelDate'))
+        serializer = BusBookingSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+class NewBusBooking(APIView):
+
+    def post(self, request, format = None):
+        booking = BusBooking.objects.filter(id = request.data.get('id'))
+        if not booking:
+            try:
+                new_booking = BusBooking(   id = request.data.get('id'),
+                                            service_id = request.data.get('service_id'),
+                                            email = request.data.get('email'),
+                                            From = request.data.get('From'),
+                                            To = request.data.get('To'),
+                                            TravelDate = request.data.get('TravelDate'),
+                                            booking_date = request.data.get('booking_date'),
+                                            seats = request.data.get('seats'),
+                                            bill = request.data.get('bill'))
+                new_booking.full_clean()
+                new_booking.save()
+
+                return Response(status = status.HTTP_201_CREATED)
+            except Exception as e:
+                print(e)
+                return Response(status = status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status = status.HTTP_400_BAD_REQUEST)
+
+class GetBusBookingById(APIView):
+
+    def get(self, request, id, format = None):
+        bookings = BusBooking.objects.filter(id = id)
+        serializer = BusBookingSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+class DeleteBusBooking(APIView):
+
+    def post(self, request, format = None):
+        booking = BusBooking.objects.get(id = request.data.get('id'))
+        booking.delete()
+
+        if request.data.get('db_addr_1') != None:
+            DATA = {}
+            UP = {'db_addr_1': False, 'db_addr_2': False}
+            for item in request.data:
+                DATA[item] = request.data.get(item)
+            db_addr_1 = DATA['db_addr_1']
+            db_addr_2 = DATA['db_addr_2']
+            del DATA['db_addr_1']
+            del DATA['db_addr_2']
+
+            try:
+                r1 = requests.post(db_addr_1, data = DATA)
+                if r1.status_code == 200:
+                    UP['db_addr_1'] = True
+            except:
+                pass
+
+            try:
+                r2 = requests.post(db_addr_2, data = DATA)
+                if r2.status_code == 200:
+                    UP['db_addr_2'] = True
+            except:
+                pass
+
+            serializer = UpdateStatusSerializer(UP)
+            return Response(serializer.data, status = status.HTTP_200_OK)
+
+        else:
+            return Response(status = status.HTTP_200_OK)
+
+class GetBusBookingByUser(APIView):
+
+    def get(self, request, email, format = None):
+        bookings = BusBooking.objects.filter(email = email)
+        serializer = BusBookingSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+class BusBookingsByDate(APIView):
+
+    def get_object(self, service_id, date):
+        queryset = BusBooking.objects.filter(service_id = service_id, TravelDate = date)
+        return queryset
+
+    def post(self, request):
+        bookings = self.get_object(request.data.get('id'), request.data.get('date'))
+        serializer = BusBookingSerializer(bookings, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)

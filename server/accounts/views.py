@@ -89,7 +89,7 @@ class PasswordResetView(View):
         user = self.get_object(request.GET.get('id'))
         if user.count() > 0:
             user = user[0]
-            r = utils.get_user(user.db_name, user.email)
+            r = utils.get_user_rep(user)
             if check_password(request.GET.get('token'), r.get('token')) == True:
                 return render(request, self.template_name, {'form': forms.PasswordResetForm()})
             else:

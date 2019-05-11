@@ -68,7 +68,47 @@
             </div>
         </div>
 
-        <!--       CREATE SERVICE        -->
+        <!--       HEARTBEAT RATE        -->
+
+        <div class="column has-text-centered">
+            <div class="box">
+
+                <h3 class="subtitle is-5">Heart Beat Rate (seconds)</h3>
+                <form class="section" method="POST">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="control">
+                            {% render_field form2.rate type="number" class="input" placeholder="HeartBeat Rate" %}
+                        </div>
+                    </div>
+                    <button name="heart_beat" class="button is-fullwidth is-info is-medium">Confirm</button>
+                </form>
+
+                <div class="tag is-medium">
+                    {% if error1 %}
+                        <div>
+                            <div class="content">
+                                {% for field in form1 %}
+                                    {% if field.errors %}
+                                        <p style="color: red;">{{ field.errors | striptags }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <div class="content">
+                                <span style="color: blue;">Set Heart Beat Rate</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div><strong>Set heartbeat rate between 3 and 10 seconds for undisrupted functioning</strong></div>
+
+        </div>
 
 
     </div>

@@ -70,3 +70,18 @@ class HotelBooking(models.Model):
 
     def __str__(self):
         return self.email
+
+class BusBooking(models.Model):
+
+    id = models.CharField(primary_key = True, null = False, max_length = 100)
+    service_id = models.CharField(null = False, max_length = 100)
+    email = models.EmailField(null = False, max_length = 100)
+    From = models.CharField(null = False, max_length = 100, default = "")
+    To = models.CharField(null = False, max_length = 100, default = "")
+    TravelDate = models.DateField(default = timezone.now, null = True)
+    booking_date = models.DateField(default = timezone.now)
+    seats = models.IntegerField(default = 0)
+    bill = models.IntegerField(default = 0)
+
+    def __str__(self):
+        return self.email

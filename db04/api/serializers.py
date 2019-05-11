@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, BusService, HotelService, HotelBooking
+from .models import User, BusService, HotelService, HotelBooking, BusBooking
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -35,3 +35,9 @@ class UpdateStatusSerializer(serializers.Serializer):
 
     db_addr_1 = serializers.BooleanField()
     db_addr_2 = serializers.BooleanField()
+
+class BusBookingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BusBooking
+        fields = ('id', 'service_id', 'email', 'From', 'To', 'booking_date', 'seats', 'bill', 'TravelDate', )

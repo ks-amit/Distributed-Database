@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block service_block %}{% if type != 'S' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+{% block admin_block %}{% if type != 'A' %}style="visibilty: hidden; display: none;"{% endif %}{% endblock %}
+
+{% block title_block %}Bus Details {% endblock %}
+
+{% block content_block %}
+
+    <div class="container has-text-centered">
+
+        <div class="columns">
+            <div class="column is-2">
+                <a class="button" onclick="goBack()"><< &nbsp; BACK</a>
+            </div>
+            <div class="column is-8">
+                <div class="tag subtitle is-4">
+                    {{ bus.name }}
+                </div>
+                <div class="subtitle is-5">
+                     {{ bus.bus_number }}
+                </div>
+                <div class="has-text-left">
+                    <div class="container">
+                        <div class="subtitle is-5">Journey:</div>
+                    </div>
+                    <div class="box">
+                        <form>
+                            <div class="field is-horizontal">
+
+                                <div class="field-body">
+                                    <div class="field">
+                                        From: &nbsp;
+                                        <div class="tag is-medium">
+                                            {{ from }}
+                                        </div>
+                                        at
+                                        <div class="tag is-medium">
+                                            {{ start_time }}
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        To: &nbsp;
+                                        <div class="tag is-medium">
+                                            {{ to }}
+                                        </div>
+                                        at
+                                        <div class="tag is-medium">
+                                            {{ end_time }}
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="tag is-medium">
+                                            <b>{{ travel_time }}</b>
+                                        </div>
+                                        &nbsp; Hours
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="container">
+                        <div class="subtitle is-5">Bus Number:</div>
+                    </div>
+                    <div class="box">
+
+                        {{ bus.bus_number }}
+
+                    </div>
+
+                    <div class="container">
+                        <div class="subtitle is-5">Bus Route</div>
+                    </div>
+                    <div class="box">
+
+                        <div>
+                            <table class="table is-fullwidth has-text-centered">
+                                <thead>
+                                    <tr>
+                                      <th><abbr title="Number">Sr. No.</abbr></th>
+                                      <th>Name</th>
+                                      <th>Timing (D : H : M)</th>
+                                      <th>Boarding Point</th>
+                                    </tr>
+                              </thead>
+                              <tbody>
+                                  {% for item in bus.combined_list %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ item.0 }}</td>
+                                        <td>{{ item.1 }}</td>
+                                        <td>{{ item.2 }}</td>
+                                    <tr>
+                                  {% endfor %}
+                              </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    {% if request.GET.From != None and request.GET.To != None and request.GET.TravelDate != None %}
+
+                        <div class="container">
+                            <div class="subtitle is-5">Book Seats:</div>
+                        </div>
+                        <div class="box">
+                            <!-- <div class="subtitle is-6">
+                                <strong>Available Rooms: </strong>
+                            </div> -->
+                            <form method="POST" class="section">
+                                {% csrf_token %}
+                                <!-- HIDDEN INPUT -->
+                                {% render_field form.available %}
+                                <div class="field is-horizontal">
+                                <div class="field-label is-normal">
+                                    <label class="label">Available Seats:</label>
+                                </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                {% if available > 0 %}
+                                                    <div class="tag is-large is-info is-rounded">{{ available }}</div>
+                                                {% else %}
+                                                    <div class="tag is-large" style="color:red;">No Seats Available</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Travel Date:</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                {% render_field form.TravelDate|attr:"readonly:true" class="input is-rounded" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Cities:</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                {% render_field form.From|attr:"readonly:true" type="text" class="input is-rounded" placeholder="From Source" %}
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <div class="control">
+                                                {% render_field form.To|attr:"readonly:true" type="text" class="input is-rounded" placeholder="To Destination" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field is-horizontal">
+                                    <div class="field-label is-normal">
+                                        <label class="label">Seats:</label>
+                                    </div>
+                                    <div class="field-body">
+                                        <div class="field">
+                                            <div class="control">
+                                                {% render_field form.seats type="number" class="input is-rounded" placeholder="Seats" %}
+                                            </div>
+                                            {% if error %}
+                                                <div class="tag is-medium" style="color: red">{{ msg }}</div>
+                                            {% else %}
+                                                <div class="tag is-medium" style="color: blue">Enter Valid number of Seats</div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="field">
+                                            <button class="button is-rounded is-primary">
+                                                Pay Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="column is-2">
+                <a class="button" href="{% url 'buses:Search' %}">Search Buses</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function goBack(){
+            window.history.back();
+        }
+    </script>
+
+{% endblock %}
