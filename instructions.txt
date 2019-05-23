@@ -10,7 +10,7 @@ SETTING UP MULTIPLE INSTANCES OF THE DATABASE:
 
 Run the following commands:
 
-sudo chown -R dumbape /var/run/postgresql/
+sudo chown -R <user_name> /var/run/postgresql/
 cd /usr/lib/postgresql/10/bin/
 ./initdb -D <path to the created folder> -U <system_username> -W
 
