@@ -14,20 +14,28 @@
         <div class="columns">
             <div class="column">
                 <div class="box">
-                    **Fancy Hotel Link**
+                    <div class="heading" style="font-size: 18px;">Easy<span style="color: green">Travels</span> Hotels</div>
+                    <section class="section"><a href="{% url 'hotels:Search' %}" class="button">Book Now</a></section>
                 </div>
             </div>
             <div class="column">
                 <div class="box">
-                    **Fancy Bus Link**
+                    <div class="heading" style="font-size: 18px;">Easy<span style="color: green">Travels</span> Buses</div>
+                    <section class="section"><a href={% url 'buses:Search' %} class="button">Book Now</a></section>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <h3 class="subtitle is-4">Why **SERVICE_NAME**</h3>
+            <h3 class="subtitle is-5">Why Choose <p style="font-size: 34px;">Easy<span style="color: green;">Travels</span></p></h3>
             <div class="section box">
-                YET TO BE IMPLEMENTED
+                <div class="columns">
+
+                    <div class="column"><span style="font-size: 40px; color: blue;">{{ users }}</span> <div class="heading" style="font-size: 18px;"> Registered Users </div></div>
+                    <div class="column"><span style="font-size: 40px; color: red;">{{ bookings }}</span> <div class="heading" style="font-size: 18px;"> Successful Bookings </div></div>
+                    <div class="column"><span style="font-size: 40px; color: green;">{{ services }}</span> <div class="heading" style="font-size: 18px;"> Services </div></div>
+
+                </div>
             </div>
         </div>
     </div>

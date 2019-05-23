@@ -99,9 +99,15 @@ class BusDetailsView(View):
         form = forms.BusBookForm(request.POST)
         details = self.get_bus_details(id)
         available = int(request.POST.get('available'))
+        Src = ''
+        Dest = ''
+        if request.GET.get('From') != None:
+            Src = request.GET.get('From').upper()
+        if request.GET.get('To') != None:
+            Dest = request.GET.get('To').upper()
         details.update({'source': details.get('route')[0], 'destination': details.get('route')[1]})
         details.update({'combined_list': zip(details.get('route'), details.get('timing'), details.get('boarding_point'))})
-        From, To, start_time, end_time, travel_time = self.get_rendering_details(details, request)
+        From, To, start_time, end_time, travel_time = self.get_rendering_details(details, request, Src, Dest)
         if form.is_valid():
             seats = int(form.cleaned_data.get('seats'))
             if seats > 0 and seats <= int(available):

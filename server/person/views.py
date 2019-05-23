@@ -13,7 +13,10 @@ class DashboardView(View):
         if is_authenticated(request) == None:
             return redirect('accounts:Login')
         else:
-            return render(request, self.template_name, {'type': get_type(request)})
+            services = models.ServiceMetaData.objects.all().count()
+            bookings = models.BookingMetaData.objects.all().count()
+            users = models.UserMetaData.objects.all().count()
+            return render(request, self.template_name, {'type': get_type(request), 'users': users, 'bookings': bookings, 'services': services})
 
 class AdminView(View):
     template_name = 'person/admin.html'
@@ -32,14 +35,16 @@ class AdminView(View):
             return redirect('accounts:Login')
 
     def post(self, request):
+        hb_rate = models.HeartBeatRate.objects.all()[0].rate
+        form2 = forms.HeartBeatForm(initial = {'rate': hb_rate})
         form1 = forms.UserPrivilageForm()
         dbs = models.DatabaseDetails.objects.order_by('name')
         if 'user_privilage' in request.POST:
             form1 = forms.UserPrivilageForm(request.POST)
             if form1.is_valid():
-                return render(request, self.template_name, {'form1': forms.UserPrivilageForm(), 'dbs': dbs, 'type': get_type(request), 'success1': '1', 'msg1': 'Request Processed'})
+                return render(request, self.template_name, {'form1': forms.UserPrivilageForm(), 'form2': form2, 'dbs': dbs, 'type': get_type(request), 'success1': '1', 'msg1': 'Request Processed'})
             else:
-                return render(request, self.template_name, {'form1': form1, 'dbs': dbs, 'type': get_type(request), 'error1': '1'})
+                return render(request, self.template_name, {'form1': form1, 'form2': form2, 'dbs': dbs, 'type': get_type(request), 'error1': '1'})
         elif 'database_edit' in request.POST:
             db = models.DatabaseDetails.objects.filter(name = request.POST.get('name'))[0]
             db.ip_addr = request.POST.get('ip_addr')
@@ -225,6 +230,7 @@ class EditServiceView(View):
                 if form1.is_valid():
                     email = form1.cleaned_data.get('email')
                     if email not in service.provider:
+                        print('HERE')
                         utils.check_primary(service)
                         r = utils.update_hotel_service_rep(id = id, provider = email, provider_code = 'ADD')
                         if r == 200:

@@ -1,0 +1,44 @@
+INSTALLING POSTGRES:
+
+sudo apt install postgresql postgresql-contrib
+
+SETTING UP MULTIPLE INSTANCES OF THE DATABASE:
+
+1. Create 5 new folders - primary, db01, db02, db03, db04, db05 (preferable in the directory /usr/local/postgres/)
+
+2. Create clusters:
+
+Run the following commands:
+
+sudo chown -R dumbape /var/run/postgresql/
+cd /usr/lib/postgresql/10/bin/
+./initdb -D <path to the created folder> -U <system_username> -W
+
+run the last command for each of the created folders to set up a database in each of them.
+
+3. Start the database server at ports 5440, 5441, 5442, 5443, 5444 respectively.
+
+pg_ctl -D <path_to_primary> -o "-p 5440" start
+pg_ctl -D <path_to_db01> -o "-p 5441" start
+pg_ctl -D <path_to_db02> -o "-p 5442" start
+pg_ctl -D <path_to_db03> -o "-p 5443" start
+pg_ctl -D <path_to_db04> -o "-p 5444" start
+
+INSTALLATION AND RUNNING THE PROJECT:
+
+1. (Optional) Make sure Virtual Environment is installed in the system. Create a new virtual environment in the project directory and switch to the virtual environment. 
+2. Run command -> pip install -r requirements.txt
+3. Start the servers: (each command in a different terminal switched to the virtual environment)
+
+python db01/manage.py runserver 9001
+python db02/manage.py runserver 9002
+python db03/manage.py runserver 9003
+python db04/manage.py runserver 9004
+python server/manage.py runserver 9000
+
+4. Create superuser: python server/manage.py createsuperuser
+   Enter valid details.
+
+5. Goto 127.0.0.1:9000/admin and login as the superuser.
+6. Goto the model database details and enter all database details.
+7. Goto 127.0.0.1:9000/login 

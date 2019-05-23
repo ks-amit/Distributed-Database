@@ -13,8 +13,8 @@
       <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
           <div class="container">
               <div class="navbar-brand">
-                  <a class="navbar-item" href="https://bulma.io">
-                      <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+                  <a class="navbar-item" href="{% url 'person:Dashboard' %}">
+                      <p style="font-size: 22px;">Easy<span style="color: green;">Travels</span></p>
                   </a>
                   <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                       <span aria-hidden="true"></span>
@@ -31,8 +31,8 @@
                   <div class="navbar-end">
                       <div class="navbar-item">
                           <div class="buttons">
-                              <a class="button is-primary is-medium">Sign up</a>
-                              <a class="button is-primary is-medium">Log in</a>
+                              <a href="{% url 'accounts:Signup' %}" class="button is-primary is-medium">Sign up</a>
+                              <a href="{% url 'accounts:Login' %}" class="button is-primary is-medium">Log in</a>
                           </div>
                       </div>
                   </div>

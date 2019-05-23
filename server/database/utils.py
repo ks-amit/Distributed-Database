@@ -177,15 +177,20 @@ def check_status():
     D = {'primary': 1}
     dbs = models.DatabaseDetails.objects.exclude(name = 'primary')
     for db in dbs:
+        #print(db.name)
         try:
             db_addr = 'http://' + db.ip_addr + ':' + db.port + STATUS
+            #print(db_addr)
+            #print('SENDING')
             r = requests.get(db_addr)
+            #print(r.status_code)
             if r.status_code == 200:
                 D[db.name] = 1
             else:
                 D[db.name] = 0
         except Exception as e:
             D[db.name] = 0
+            print(e)
             continue
 
     return D
