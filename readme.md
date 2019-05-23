@@ -1,5 +1,5 @@
 # Online Travel Agency
-## Distributed Storage
+## A Distributed Storage System
 
 This project, the Online Travel Agency is implemented as a distributed storage. All data can be stored in multiple machines on a common network. The implementation also includes the notion of primary and secondary data servers, similar to GFS - Google File System.
 
@@ -45,4 +45,20 @@ For in-depth details, kindly refer to the pdf `Distributed Systems.pdf`
 ![scr3](https://github.com/dumbape/Distributed-Storage/blob/master/snapshots/New_Service.png?raw=true)
 ![scr4](https://github.com/dumbape/Distributed-Storage/blob/master/snapshots/Manage_Service.png?raw=true)
 ![scr5](https://github.com/dumbape/Distributed-Storage/blob/master/snapshots/Admin.png?raw=true)
+
+## Install
+
+The installation of the project is complicated, however, they are provided in the file `instructions.txt`. The application uses multiple instances of postgres on the same machine, but on different ports which simulate data servers on different machines. I would be glad to help you out in case you run in to any problem while installing :)
+
+Kindly note that the nstallation instructions for UNIX based systems only.
+
+## Technologies Used
+
+* FrontEnd - HTML, CSS
+* CSS Framework - Bulma UI - https://bulma.io
+* BackEnd - Python Django
+* Python modules - psycopg2, djangorestframework, requests, status, widget_tweaks
+* Database - PostgreSQL
+
+Any kind of suggestions would be appreciated :) 
 
