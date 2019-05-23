@@ -16,9 +16,10 @@ This project, the Online Travel Agency is implemented as a distributed storage. 
 
 * Authentication - Register, Login, Recovery
 * Book hotels and buses
-* Be a service provider - create new hotel and bus services
+* Be a service provider - create and delete hotel and bus services
 * Manage services and bookings
 * Be an admin - handle databases, user permissions and heartbeat rate
+* Collaborate wth users to manage services
 
 ## Details
 
