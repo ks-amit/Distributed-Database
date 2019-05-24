@@ -51,7 +51,7 @@ For in-depth details, kindly refer to the pdf `Distributed Systems.pdf`
 
 The installation of the project is complicated, however, they are provided in the file `instructions.txt`. The application uses multiple instances of postgres on the same machine, but on different ports which simulate data servers on different machines. I would be glad to help you out in case you run in to any problem while installing :)
 
-Kindly note that the nstallation instructions for UNIX based systems only.
+Kindly note that the installation instructions are meant for UNIX based systems only.
 
 ## Technologies Used
 
